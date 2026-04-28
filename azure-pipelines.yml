@@ -1,0 +1,88 @@
+# Node.js Express Web App to Linux on Azure
+# Build a Node.js Express app and deploy it to Azure as a Linux web app.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+  - develop
+
+pr: none
+
+pool:
+  name: vmss-shared
+
+variables:
+  - group: ddip-lof-app-pipeline-vars
+
+
+stages:
+  - stage: Build
+    displayName: Build stage
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          name: vmss-shared
+
+        steps:
+          - task: UseNode@1
+            inputs:
+              version: '24.x'
+            displayName: 'Install Node.js'
+
+          - script: |
+              npm install
+              npm run build
+              npm prune --production
+            displayName: 'npm install, build and prune'
+
+          - task: CopyFiles@2
+            displayName: 'Copy files to staging'
+            inputs:
+              SourceFolder: '$(System.DefaultWorkingDirectory)'
+              Contents: |
+                dist/**
+                bin/**
+                data/**
+                node_modules/**
+                package.json
+                package-lock.json
+                build/**
+                .deployment
+              TargetFolder: '$(Build.ArtifactStagingDirectory)/package'
+
+          - task: ArchiveFiles@2
+            displayName: 'Archive files'
+            inputs:
+              rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/package'
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+              replaceExistingArchive: true
+
+          - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+            artifact: drop
+
+  - stage: Deploy
+    displayName: Deploy stage
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy
+        environment: $(environmentName)
+        pool:
+          name: vmss-shared
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureWebApp@1
+                  displayName: 'Azure Web App Deploy: app-tst-uks-postcodes-001'
+                  inputs:
+                    azureSubscription: $(azureSubscription)
+                    appType: webAppLinux
+                    appName: 'app-tst-uks-postcodes-001'
+                    runtimeStack: 'NODE|24-lts'
+                    package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+                    startUpCommand: 'npm start'
