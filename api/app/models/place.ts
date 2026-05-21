@@ -10,9 +10,7 @@ import {
 } from "./base";
 
 import { readdirSync, statSync } from "fs";
-// @ts-ignore
 import OSPoint from "ospoint";
-// @ts-ignore
 import QueryStream from "pg-query-stream";
 import escapeRegex from "escape-string-regexp";
 import { unaccent } from "../lib/unaccent";
@@ -511,7 +509,7 @@ const seedData = async (directory: string) => {
   };
 
   const allFiles = readdirSync(directory);
-  
+
   const files = allFiles
     .filter((f: string) => f.match(/\.csv$/))
     .map((f: string) => {

@@ -81,7 +81,7 @@
     "minimist": "~1.2.8",
     "morgan": "~1.10.1",
     "node.extend": "~2.0.3",
-    "ospoint": "~0.2.1",
+    "ospoint": "github:communitiesuk/ospoint",
     "pg": "~8.16.0",
     "pg-copy-streams": "~7.0.0",
     "pg-query-stream": "~4.15.0",
