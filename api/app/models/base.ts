@@ -4,10 +4,25 @@ import { from } from "pg-copy-streams";
 // @ts-ignore
 import csv = require("csv");
 import { getConfig } from "../../config/config";
+import { getAzureAdToken } from "../lib/azure_auth";
 const defaults = getConfig();
 
+// When Azure AD authentication is enabled, use a managed identity token as the
+// password instead of a static credential. The pg Pool accepts a function for
+// the `password` option, which is called for each new connection, ensuring
+// tokens are always fresh.
+const azureAdAuthEnabled =
+  process.env.AZURE_AD_AUTH_ENABLED?.toLowerCase() === "true";
+
+const poolConfig = azureAdAuthEnabled
+  ? {
+      ...defaults.postgres,
+      password: getAzureAdToken,
+    }
+  : defaults.postgres;
+
 // Instantiate postgres client pool
-const pool = new Pool(defaults.postgres);
+const pool = new Pool(poolConfig);
 
 export type Schema = Record<string, string>;
 
