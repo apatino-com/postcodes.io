@@ -15,6 +15,21 @@ jobs:
     permissions:
       contents: read #This is required for actions/checkout
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postcodesio
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postcodeio_testing
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v5
 
@@ -24,6 +39,13 @@ jobs:
           node-version: '24.x'
 
       - name: npm install, build, and test
+        env:
+          NODE_ENV: test
+          POSTGRES_USER: postcodesio
+          POSTGRES_PASSWORD: password
+          POSTGRES_DATABASE: postcodeio_testing
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
         run: |
           npm install
           npm run build --if-present
