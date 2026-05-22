@@ -118,7 +118,7 @@
     "@types/react": "~19.1.8",
     "@types/serve-favicon": "~2.5.7",
     "@types/supertest": "~7.2.0",
-    "chai": "~6.2.1",
+    "chai": "~6.2.2",
     "clsx": "~2.1.1",
     "mocha": "~11.7.5",
     "openapi-types": "~12.1.3",
