@@ -17,8 +17,7 @@ const azureAdAuthEnabled =
 const poolConfig = azureAdAuthEnabled
   ? {
       ...defaults.postgres,
-      password: getAzureAdToken,
-      ssl: { rejectUnauthorized: false },
+      password: getAzureAdToken
     }
   : defaults.postgres;
 
