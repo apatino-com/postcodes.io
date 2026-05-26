@@ -25,13 +25,13 @@ const extractOnspdVal = csvExtractor(
 );
 
 export interface PostcodeInterface {
-  postcode: string;
-  quality: number;
+  postcode: string | null;
+  quality: number | null;
   eastings: number | null;
   northings: number | null;
-  country: string;
+  country: string | null;
   nhs_ha: string | null;
-  date_of_introduction: string;
+  date_of_introduction: string | null;
   longitude: number | null;
   latitude: number | null;
   european_electoral_region: string | null;
@@ -39,8 +39,8 @@ export interface PostcodeInterface {
   region: string | null;
   lsoa: string | null;
   msoa: string | null;
-  incode: string;
-  outcode: string;
+  incode: string | null;
+  outcode: string | null;
   parliamentary_constituency: string | null;
   parliamentary_constituency_2024: string | null;
   admin_district: string | null;
@@ -68,16 +68,16 @@ export interface PostcodeInterface {
   lep1: string | null;
   lep2: string | null;
   codes: {
-    admin_district: string;
-    admin_county: string;
-    admin_ward: string;
-    parish: string;
-    parliamentary_constituency: string;
-    parliamentary_constituency_2024: string;
-    ccg: string;
-    ccg_id: string;
-    ced: string;
-    nuts: string;
+    admin_district: string | null;
+    admin_county: string | null;
+    admin_ward: string | null;
+    parish: string | null;
+    parliamentary_constituency: string | null;
+    parliamentary_constituency_2024: string | null;
+    ccg: string | null;
+    ccg_id: string | null;
+    ced: string | null;
+    nuts: string | null;
     lsoa: string | null;
     msoa: string | null;
     lau2: string | null;
@@ -534,7 +534,7 @@ const loadPostcodeIds = async (outcode?: string): Promise<any> => {
     client
       .query(new QueryStream(idQuery, params))
       .on("end", () => {
-        idCache[outcode] = idStore;
+        idCache[outcode!] = idStore;
         client.release();
         resolve(idStore);
       })
@@ -550,7 +550,7 @@ const loadPostcodeIds = async (outcode?: string): Promise<any> => {
 };
 
 const random = async (outcode?: string): Promise<PostcodeTuple | null> => {
-  let ids = idCache[outcode];
+  let ids = idCache[outcode!];
   if (!ids) ids = await loadPostcodeIds(outcode);
   return randomFromIds(ids);
 };
@@ -565,7 +565,7 @@ const findByIdQuery = `
 `;
 
 // Use an in memory array of IDs to retrieve random postcode
-const randomFromIds = async (ids: number[]): Promise<PostcodeTuple> => {
+const randomFromIds = async (ids: number[]): Promise<PostcodeTuple | null> => {
   const length = ids.length;
   const randomId = ids[Math.floor(Math.random() * length)];
   const result = await query<PostcodeTuple>(findByIdQuery, [randomId]);
@@ -580,7 +580,7 @@ interface SearchOptions {
 
 // Parses postcode search options, returns object with limit
 const parseSearchOptions = (options: SearchOptions): { limit: number } => {
-  let limit = parseInt(options.limit, 10);
+  let limit = parseInt(options.limit ?? "", 10);
   if (isNaN(limit) || limit < 1) limit = defaults.search.limit.DEFAULT;
   if (limit > defaults.search.limit.MAX) limit = defaults.search.limit.MAX;
   return { limit };
@@ -597,13 +597,13 @@ const whitespaceRe = /\s+/g;
  */
 export const search = async (
   options: SearchOptions
-): Promise<PostcodeTuple[]> => {
+): Promise<PostcodeTuple[] | null> => {
   const postcode = options.postcode.toUpperCase().trim();
   const pcCompact = postcode.replace(whitespaceRe, "");
 
   // Returns substring matches on postcode
   const extractPartialMatches = (r: PostcodeTuple[]): PostcodeTuple[] =>
-    r.filter((p) => p.pc_compact.includes(pcCompact));
+    r.filter((p) => p.pc_compact?.includes(pcCompact));
 
   // Parses and formats results, includes:
   // - returns null if empty array
@@ -712,7 +712,7 @@ export interface NearestPostcodesOptions {
 
 const nearestPostcodes = async (
   options: NearestPostcodesOptions
-): Promise<NearestPostcodeTuple[]> => {
+): Promise<NearestPostcodeTuple[] | null> => {
   const DEFAULT_RADIUS = defaults.nearest.radius.DEFAULT;
   const MAX_RADIUS = defaults.nearest.radius.MAX;
   const DEFAULT_LIMIT = defaults.nearest.limit.DEFAULT;
@@ -789,7 +789,7 @@ interface QueryBoundOptions extends NearestPostcodesOptions {
 
 const deriveMaxRange = async (
   options: NearestPostcodesOptions
-): Promise<number> => {
+): Promise<number | null> => {
   const queryBound = async (
     { longitude, latitude }: QueryBoundOptions,
     range: number
@@ -800,7 +800,7 @@ const deriveMaxRange = async (
       range,
       SEARCH_LIMIT,
     ]);
-    return result.rowCount;
+    return result.rowCount ?? 0;
   };
 
   const params: QueryBoundOptions = { ...options };
@@ -819,7 +819,7 @@ const deriveMaxRange = async (
     return deriveMaxRange(params);
   }
 
-  params.lowerBound += INCREMENT;
+  params.lowerBound = (params.lowerBound ?? 0) + INCREMENT;
   if (params.lowerBound > MAX_RANGE) return null;
   const c = await queryBound(params, params.lowerBound);
   if (c < SEARCH_LIMIT) return deriveMaxRange(params);
@@ -952,7 +952,7 @@ const findOutcode = async (o: string): Promise<OutcodeInterface | null> => {
   result.parliamentary_constituency = toArray(
     result.parliamentary_constituency
   );
-  return result;
+  return result as unknown as OutcodeInterface;
 };
 
 const toJson = function (
@@ -1117,7 +1117,7 @@ const seedPostcodes = async (filepath: string) => {
 
   await methods.csvSeed({
     filepath: [filepath],
-    transform: (row: RowExtract) => {
+    transform: (row: RowExtract): any[] | null => {
       row.extract = (code: string) => extractOnspdVal(row, code); // Append csv extraction logic
       if (row.extract("pcds") === "pcds") return null; // Skip if header
       if (row.extract("doterm") && row.extract("doterm").length !== 0)

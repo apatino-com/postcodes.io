@@ -66,8 +66,6 @@ const notFoundRenderer = (_: unknown, res: Response) =>
 export const rendererConfig = (app: Express) => {
   app.use(filter);
   app.use(renderer);
-  //@ts-expect-error
-  app.use(errorRenderer);
-  //@ts-expect-error
-  app.use(notFoundRenderer);
+  app.use(errorRenderer as any);
+  app.use(notFoundRenderer as any);
 };

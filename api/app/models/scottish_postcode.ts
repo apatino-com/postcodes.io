@@ -154,7 +154,7 @@ interface SeedPostcodesOptions {
 const seedPostcodes = ({ extractor, filepath }: SeedPostcodesOptions) => {
   return methods.csvSeed({
     filepath: [filepath],
-    transform: (row: RowExtract) => {
+    transform: (row: RowExtract): any[] | null => {
       clean(row);
       row.extract = (code: string) => extractor(row, code);
       if (row.extract("Postcode") === "Postcode") return null; // Skip if header

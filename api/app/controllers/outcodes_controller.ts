@@ -8,19 +8,19 @@ export const query: Handler = (request, response, next): void => {
   const { lat, lon, longitude, latitude, limit, radius } = request.query;
 
   //set limit and radius
-  request.params.limit = qToString(limit);
-  request.params.radius = qToString(radius);
+  request.params.limit = qToString(limit) ?? "";
+  request.params.radius = qToString(radius) ?? "";
 
   if (latitude && longitude) {
-    request.params.latitude = qToString(latitude);
-    request.params.longitude = qToString(longitude);
+    request.params.latitude = qToString(latitude) ?? "";
+    request.params.longitude = qToString(longitude) ?? "";
     nearestOutcodes(request, response, next);
     return;
   }
 
   if (lat && lon) {
-    request.params.latitude = qToString(lat);
-    request.params.longitude = qToString(lon);
+    request.params.latitude = qToString(lat) ?? "";
+    request.params.longitude = qToString(lon) ?? "";
     nearestOutcodes(request, response, next);
     return;
   }
@@ -49,10 +49,10 @@ export const nearest: Handler = async (request, response, next) => {
     const { limit, radius } = request.query;
     const result = await Outcode.find(outcode);
     if (!result) return next(new OutcodeNotFoundError());
-    request.params.longitude = qToString(result.longitude);
-    request.params.latitude = qToString(result.latitude);
-    request.params.limit = qToString(limit);
-    request.params.radius = qToString(radius);
+    request.params.longitude = qToString(result.longitude) ?? "";
+    request.params.latitude = qToString(result.latitude) ?? "";
+    request.params.limit = qToString(limit) ?? "";
+    request.params.radius = qToString(radius) ?? "";
     nearestOutcodes(request, response, next);
   } catch (error) {
     next(error);
