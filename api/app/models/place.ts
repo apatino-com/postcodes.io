@@ -202,8 +202,8 @@ const prefixSearch = async (
   options: SearchOptions
 ): Promise<PlaceTuple[] | null> => {
   const regex = `^${unaccent(escapeRegex(options.name ?? ""))}.*`;
-  const limit = options.limit;
-  const result = await query(searchQuery, [regex, limit ?? 0]);
+  const limit = options.limit ?? searchDefaults.limit.DEFAULT;
+  const result = await query(searchQuery, [regex, limit]);
   if (result.rows.length === 0) return null;
   return result.rows;
 };
@@ -234,7 +234,7 @@ const termsSearch = async ({
   name,
   limit,
 }: SearchOptions): Promise<PlaceTuple[] | null> => {
-  const result = await query(termsSearchQuery, [name ?? "", limit ?? 0]);
+  const result = await query(termsSearchQuery, [name ?? "", limit ?? searchDefaults.limit.DEFAULT]);
   if (result.rows.length === 0) return null;
   return result.rows;
 };
