@@ -1,9 +1,9 @@
 import { join } from "path";
-import { generateMethods, query } from "../../api/app/models/base";
+import { generateMethods, query } from "../../api/app/models";
 import { getConfig as configFactory } from "../../api/config/config";
 import * as AttributeBaseSuite from "./attribute_base.suite";
 import * as Base from "../../api/app/models/base";
-import { Postcode } from "../../api/app/models/postcode";
+import { Postcode } from "../../api/app/models";
 import removeDiacritics from "./remove_diacritics";
 
 import { unaccent } from "../../api/app/lib/unaccent";
@@ -133,17 +133,17 @@ async function randomTerminatedPostcode() {
 }
 
 const randomPostcode = async () => {
-  const { postcode } = await Postcode.random();
+  const { postcode } = (await Postcode.random())!;
   return postcode;
 };
 
 const randomOutcode = async () => {
-  const { outcode } = await Postcode.random();
+  const { outcode } = (await Postcode.random())!;
   return outcode;
 };
 
 const randomLocation = async () => {
-  const { longitude, latitude } = await Postcode.random();
+  const { longitude, latitude } = (await Postcode.random())!;
   return { longitude, latitude };
 };
 

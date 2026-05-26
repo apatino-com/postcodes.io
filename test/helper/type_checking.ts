@@ -1,11 +1,11 @@
-import { Postcode, TerminatedPostcode } from "../../api/app/models/index";
+import { Postcode, TerminatedPostcode } from "../../api/app/models";
 import { assert } from "chai";
 
 // Retrieve object size
 const len = (o: unknown[]): number => Object.keys(o).length;
 
 // Dedupes contents of array
-const dedupe = (a: unknown[]): unknown[] => Array.from(new Set(a));
+const dedupe = (a: string[]): string[] => Array.from(new Set(a));
 
 /**
  * Returns a function to be passed to an iterator. Checks props exist

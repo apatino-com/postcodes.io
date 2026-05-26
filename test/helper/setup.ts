@@ -17,7 +17,7 @@ import {
   Lsoa,
   Msoa,
   PoliceForceArea,
-} from "../../api/app/models/index";
+} from "../../api/app/models";
 import { QueryResult } from "pg";
 
 const NO_RELOAD_DB = !!process.env.NO_RELOAD_DB;
@@ -93,7 +93,7 @@ const clearTerminatedPostcodesDb = async (): Promise<QueryResult<
 // Clear ONSPD table
 const clearPostcodeDb = async (): Promise<QueryResult<any> | null> => {
   if (NO_RELOAD_DB) return null;
-  await Postcode.destroyRelation();
+  return Postcode.destroyRelation();
 };
 
 // Clear SPD Table

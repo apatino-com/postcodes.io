@@ -1,6 +1,6 @@
 import * as helper from "./helper";
 import { assert } from "chai";
-import { query, csvExtractor } from "../api/app/models/base";
+import { query, csvExtractor } from "../api/app/models";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -40,7 +40,7 @@ describe("Base model", function () {
           await customRelation.create({
             bogus: "bogusfield",
           });
-        } catch (error) {
+        } catch (error: any) {
           assert.equal(
             error.message,
             `column "bogus" of relation "${customRelation.relation.relation}" does not exist`
