@@ -2,7 +2,7 @@ import fs from "fs";
 import { assert } from "chai";
 import { parse } from "csv-parse/sync";
 import * as helper from "./helper/index";
-import { query } from "../api/app/models/base";
+import { query } from "../api/app/models";
 const seedPathDirectory = `${__dirname}/seed/places/`;
 const seedFilePath = `${__dirname}/seed/places/HY20.csv`;
 const { Place } = helper;
@@ -236,7 +236,7 @@ describe("Place Model", () => {
           longitude: "foo",
           latitude: "0",
         });
-      } catch (error) {
+      } catch (error: any) {
         assert.match(error.message, /invalid\slongitude/i);
       }
     });
@@ -246,7 +246,7 @@ describe("Place Model", () => {
           longitude: "0",
           latitude: "foo",
         });
-      } catch (error) {
+      } catch (error: any) {
         assert.match(error.message, /invalid\slatitude/i);
       }
     });
@@ -327,7 +327,7 @@ describe("Place Model", () => {
           longitude: "foo",
           latitude: "0",
         });
-      } catch (error) {
+      } catch (error: any) {
         assert.match(error.message, /invalid\slongitude/i);
       }
     });
@@ -337,7 +337,7 @@ describe("Place Model", () => {
           longitude: "0",
           latitude: "foo",
         });
-      } catch (error) {
+      } catch (error: any) {
         assert.match(error.message, /invalid\sgeometry/i);
       }
     });

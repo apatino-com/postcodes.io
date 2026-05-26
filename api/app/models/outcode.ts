@@ -65,7 +65,7 @@ const seedData = async () => {
   for (const { outcode } of rows) {
     const o = await Postcode.findOutcode(outcode);
     if (o === null) continue;
-    await methods.create<Omit<OutcodeTuple, "id" | "location">>({
+    await (methods.create as any)({
       ...o,
       northings: Math.round(o.northings),
       eastings: Math.round(o.eastings),

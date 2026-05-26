@@ -1,9 +1,9 @@
 import { Pool } from "pg";
-import { config } from "../../api/config/config";
+import { getConfig } from "../../api/config/config";
 
 // Direct database insertion for the test place data
 export const seedTestPlace = async (): Promise<void> => {
-  const testConfig = config.test;
+  const testConfig = getConfig("test");
   const pool = new Pool({
     user: testConfig.postgres.user,
     host: testConfig.postgres.host,

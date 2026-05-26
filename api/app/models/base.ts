@@ -1,13 +1,28 @@
 import { createReadStream } from "fs";
-import { Pool, PoolClient, QueryResult } from "pg";
+import { Pool, PoolClient, QueryResult, QueryResultRow } from "pg";
 import { from } from "pg-copy-streams";
 // @ts-ignore
 import csv = require("csv");
 import { getConfig } from "../../config/config";
+import { getAzureAdToken } from "../lib/azure_auth";
 const defaults = getConfig();
 
+// When Azure AD authentication is enabled, use a managed identity token as the
+// password instead of a static credential. The pg Pool accepts a function for
+// the `password` option, which is called for each new connection, ensuring
+// tokens are always fresh.
+const azureAdAuthEnabled =
+  process.env.AZURE_AD_AUTH_ENABLED?.toLowerCase() === "true";
+
+const poolConfig = azureAdAuthEnabled
+  ? {
+      ...defaults.postgres,
+      password: getAzureAdToken
+    }
+  : defaults.postgres;
+
 // Instantiate postgres client pool
-const pool = new Pool(defaults.postgres);
+const pool = new Pool(poolConfig);
 
 export type Schema = Record<string, string>;
 
@@ -38,7 +53,7 @@ export interface ForeignColumn {
   as: string;
 }
 
-export const query = async <T = any>(
+export const query = async <T extends QueryResultRow = any>(
   text: string,
   values?: (string | number)[]
 ): Promise<QueryResult<T>> => {
@@ -55,7 +70,7 @@ export const query = async <T = any>(
 
 export const _create =
   ({ relation }: Relation) =>
-  <T = Record<string, string | number>>(newRecord: T) => {
+  <T extends Record<string, string | number>>(newRecord: T) => {
     return query(
       `
     INSERT INTO ${relation}
@@ -118,7 +133,7 @@ export const _createIndexes =
     }
   };
 
-type Transform = (row: string[]) => string[];
+type Transform = (row: string[] | any) => string[] | any[] | null;
 
 interface CsvSeedOptions {
   filepath: string[];
@@ -139,14 +154,15 @@ export const _csvSeed =
     const updates = filepath.map(
       (f) =>
         new Promise<void>((resolve, reject) => {
-          pool.connect((_: Error, client: PoolClient, done: any) => {
+          pool.connect((_: Error | undefined, client: PoolClient | undefined, done: any) => {
+            if (!client) { reject(new Error("No client")); return; }
             const pgStream = client
               .query(from(q))
               .on("finish", () => {
                 done();
                 resolve();
               })
-              .on("error", (pgError) => {
+              .on("error", (pgError: Error) => {
                 done();
                 reject(pgError);
               });

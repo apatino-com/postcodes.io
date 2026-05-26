@@ -14,6 +14,9 @@ export const ready: Handler = async (_, response, next) => {
   try {
     await query("SELECT 1");
   } catch (error) {
+    const err = error as Error;
+    console.error("[ready] Database connection failed:", err.message);
+    console.error("[ready] Error stack:", err.stack);
     return next(new NotReadyError());
   }
   response.jsonApiResponse = {

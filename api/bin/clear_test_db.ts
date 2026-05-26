@@ -40,7 +40,7 @@ const clear = async () => {
 };
 
 export const run = async (): Promise<void> => {
-  if (process.env.PRESERVE_DB !== undefined) return null;
+  if (process.env.PRESERVE_DB !== undefined) return;
   console.log("Clearing test DB");
   await clear();
   console.log("Done.");

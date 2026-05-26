@@ -21,6 +21,7 @@ export const show: Handler = async (request, response, next) => {
 export const random: Handler = async (request, response, next) => {
   try {
     const place = await Place.random();
+    if (!place) return next(new PlaceNotFoundError());
     response.jsonApiResponse = {
       status: 200,
       result: Place.toJson(place),
@@ -47,9 +48,9 @@ const searchPlace: Handler = async (request, response, next) => {
     const name = qToString(request.query.query || request.query.q) || "";
     if (name.trim().length === 0) return returnEmptyResponse(response, next);
 
-    let limit = parseInt(qToString(request.query.limit || request.query.l), 10);
+    const parsedLimit = parseInt(qToString(request.query.limit || request.query.l) ?? "", 10);
     //if NAN make it undefined
-    if (isNaN(limit)) limit = undefined;
+    const limit: number | undefined = isNaN(parsedLimit) ? undefined : parsedLimit;
 
     const places = await Place.search({ name, limit });
     if (!places) return returnEmptyResponse(response, next);

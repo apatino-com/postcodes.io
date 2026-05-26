@@ -14,6 +14,7 @@
     "rootDir": "api",
     "noEmit": false,
     "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
     "paths": {
       "*": ["node_modules/*"]
     }

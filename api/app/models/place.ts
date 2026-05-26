@@ -10,9 +10,7 @@ import {
 } from "./base";
 
 import { readdirSync, statSync } from "fs";
-// @ts-ignore
 import OSPoint from "ospoint";
-// @ts-ignore
 import QueryStream from "pg-query-stream";
 import escapeRegex from "escape-string-regexp";
 import { unaccent } from "../lib/unaccent";
@@ -203,8 +201,8 @@ const searchQuery = `
 const prefixSearch = async (
   options: SearchOptions
 ): Promise<PlaceTuple[] | null> => {
-  const regex = `^${unaccent(escapeRegex(options.name))}.*`;
-  const limit = options.limit;
+  const regex = `^${unaccent(escapeRegex(options.name ?? ""))}.*`;
+  const limit = options.limit ?? searchDefaults.limit.DEFAULT;
   const result = await query(searchQuery, [regex, limit]);
   if (result.rows.length === 0) return null;
   return result.rows;
@@ -236,7 +234,7 @@ const termsSearch = async ({
   name,
   limit,
 }: SearchOptions): Promise<PlaceTuple[] | null> => {
-  const result = await query(termsSearchQuery, [name, limit]);
+  const result = await query(termsSearchQuery, [name ?? "", limit ?? searchDefaults.limit.DEFAULT]);
   if (result.rows.length === 0) return null;
   return result.rows;
 };
@@ -244,10 +242,10 @@ const termsSearch = async ({
 let idCache: void | number[];
 
 // Retrieve random place
-const random = async (): Promise<PlaceTuple> => {
+const random = async (): Promise<PlaceTuple | null> => {
   if (!idCache) idCache = await loadPlaceIds();
   const result = await loadPlaceIds();
-  return randomFromIds(idCache);
+  return randomFromIds(idCache as number[]);
 };
 
 interface Ids {
@@ -268,7 +266,7 @@ const findByIdQuery = `
 		id=$1
 `;
 
-const randomFromIds = async (ids: number[]): Promise<PlaceTuple> => {
+const randomFromIds = async (ids: number[]): Promise<PlaceTuple | null> => {
   const length = ids.length;
   const randomId = ids[Math.floor(Math.random() * length)];
   const result = await query(findByIdQuery, [randomId]);
@@ -315,7 +313,7 @@ const contains = async (
   const latitude = parseFloat(options.latitude);
   if (isNaN(latitude)) throw new Error("Invalid latitude");
 
-  let limit = parseInt(options.limit, 10) || containsDefaults.limit.DEFAULT;
+  let limit = parseInt(options.limit ?? "", 10) || containsDefaults.limit.DEFAULT;
   if (limit > containsDefaults.limit.MAX)
     limit = containsDefaults.limit.DEFAULT;
 
@@ -359,10 +357,10 @@ const nearest = async (
   const latitude = parseFloat(options.latitude);
   if (isNaN(latitude)) new Error("Invalid latitude");
 
-  let limit = parseInt(options.limit, 10) || nearestDefaults.limit.DEFAULT;
+  let limit = parseInt(options.limit ?? "", 10) || nearestDefaults.limit.DEFAULT;
   if (limit > nearestDefaults.limit.MAX) limit = nearestDefaults.limit.DEFAULT;
 
-  let radius = parseFloat(options.radius) || nearestDefaults.radius.DEFAULT;
+  let radius = parseFloat(options.radius ?? "") || nearestDefaults.radius.DEFAULT;
   if (radius > nearestDefaults.radius.MAX) radius = nearestDefaults.radius.MAX;
 
   const result = await query<PlaceDistanceTuple>(nearestQuery, [
@@ -484,7 +482,7 @@ const seedData = async (directory: string) => {
     district_borough_type: (val: string) => val.replace(typeRegex, ""),
   };
 
-  const transform = (row: string[]) => {
+  const transform = (row: string[]): any[] | null => {
     // Only process populated places
     if (row[typeIndex] !== "populatedPlace") return null;
     const northings = row[csvColumns.northings];
@@ -511,7 +509,7 @@ const seedData = async (directory: string) => {
   };
 
   const allFiles = readdirSync(directory);
-  
+
   const files = allFiles
     .filter((f: string) => f.match(/\.csv$/))
     .map((f: string) => {
@@ -553,7 +551,7 @@ const generateTsSearchFields = async () => {
   return Promise.all(updates);
 };
 
-const generatePolygonQuery = (place: PlaceTuple): string => {
+const generatePolygonQuery = (place: PlaceTuple): string | undefined => {
   const locations = [];
   if (
     place.min_eastings *
@@ -622,7 +620,8 @@ const createPolygons = () => {
       const stream = client.query(streamQuery);
       stream
         .on("data", (place: PlaceTuple) => {
-          updateBuffer.push(generatePolygonQuery(place));
+          const polygonQuery = generatePolygonQuery(place);
+          if (polygonQuery) updateBuffer.push(polygonQuery);
           if (updateBuffer.length > 1000) drainBuffer();
         })
         .on("error", cleanup)

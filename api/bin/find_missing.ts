@@ -108,7 +108,7 @@ export const run = () =>
   createReadStream(source)
     .pipe(parse({ delimiter: "," }))
     .on("data", (row: string[]): void => {
-      if (row[4].length !== 0) return null; // Skip row if terminated postcode
+      if (row[4].length !== 0) return; // Skip row if terminated postcode
       codeTypes.forEach((codeType) => check(row, codeType));
     })
     .on("end", () => {

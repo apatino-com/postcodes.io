@@ -102,7 +102,7 @@ describe("Outcode Model", () => {
   describe("find", () => {
     before(async () => {
       await Outcode.setupTable();
-      const result = await helper.query("Select count(*) from outcodes");
+      await helper.query("Select count(*) from outcodes");
     });
 
     after(async () => {
@@ -167,7 +167,7 @@ describe("Outcode Model", () => {
       params.longitude = "foo";
       try {
         await Outcode.nearest(params);
-      } catch (error) {
+      } catch (error: any) {
         assert.isNotNull(error);
         assert.match(error.message, /invalid\slongitude/i);
       }
@@ -176,7 +176,7 @@ describe("Outcode Model", () => {
       params.latitude = "foo";
       try {
         await Outcode.nearest(params);
-      } catch (error) {
+      } catch (error: any) {
         assert.isNotNull(error);
         assert.match(error.message, /invalid\slongitude/i);
       }

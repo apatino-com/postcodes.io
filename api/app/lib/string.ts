@@ -8,7 +8,7 @@ export const isEmpty = (str: string): boolean => {
   return emptyRe.test(str);
 };
 
-export const toString = (value: unknown): string => value.toString();
+export const toString = (value: unknown): string => (value as object).toString();
 
 const isString = (value: unknown): value is string => typeof value === "string";
 

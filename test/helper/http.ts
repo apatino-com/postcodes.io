@@ -18,6 +18,6 @@ export const validCorsOptions = (response: any): void => {
 
 // Rough regex to extract json object
 export const jsonpResponseBody = (text: string): JSON => {
-  const result = text.match(/\(.*\)/);
+  const result = text.match(/\(.*\)/)!;
   return JSON.parse(result[0].slice(1, result[0].length - 1));
 };

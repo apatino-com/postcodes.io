@@ -34,7 +34,7 @@ const accentMap = new Map([
 // https://stackoverflow.com/questions/28899042/unaccent-preventing-index-usage-in-postgres/28899610#28899610
 export const unaccent = (str: string): string => {
   for (const char of str) {
-    if (accentMap.has(char)) str = str.replace(char, accentMap.get(char));
+    if (accentMap.has(char)) str = str.replace(char, accentMap.get(char)!);
   }
   return str;
 };

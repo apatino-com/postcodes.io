@@ -4,9 +4,10 @@ import { assert } from "chai";
 import { parse } from "csv-parse/sync";
 import * as helper from "./helper/index";
 import { PostcodesioHttpError } from "../api/app/lib/errors";
+import { query } from "../api/app/models";
+
 const seedFilePath = path.resolve(__dirname, "./seed/postcode.csv");
 const Postcode = helper.Postcode;
-import { query } from "../api/app/models/base";
 
 /**
  * Counts number of postcode records if
@@ -289,8 +290,8 @@ describe("Postcode Model", function () {
     });
 
     it("should return a list of nearby postcodes", async () => {
-      const params = location;
-      const postcodes = await Postcode.nearestPostcodes(params);
+
+      const postcodes = await Postcode.nearestPostcodes(location);
       assert.isArray(postcodes);
       postcodes.forEach((p) => helper.isRawPostcodeObjectWithFCandDistance(p));
     });
@@ -327,7 +328,7 @@ describe("Postcode Model", function () {
       };
       try {
         await Postcode.nearestPostcodes(params);
-      } catch (error) {
+      } catch (error: any) {
         assert.instanceOf(error, PostcodesioHttpError);
       }
     });
@@ -339,7 +340,7 @@ describe("Postcode Model", function () {
       };
       try {
         await Postcode.nearestPostcodes(nearby);
-      } catch (error) {
+      } catch (error: any) {
         assert.instanceOf(error, PostcodesioHttpError);
       }
     });
@@ -350,7 +351,7 @@ describe("Postcode Model", function () {
       };
       try {
         await Postcode.nearestPostcodes(params);
-      } catch (error) {
+      } catch (error: any) {
         assert.isNotNull(error);
         assert.match(error.message, /Invalid longitude\/latitude submitted/i);
       }
@@ -362,7 +363,7 @@ describe("Postcode Model", function () {
       };
       try {
         await Postcode.nearestPostcodes(params);
-      } catch (error) {
+      } catch (error: any) {
         assert.isNotNull(error);
         assert.match(error.message, /Invalid longitude\/latitude submitted/i);
       }
