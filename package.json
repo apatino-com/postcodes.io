@@ -176,6 +176,7 @@
     "ws": "^8.17.1",
     "uuid": "^11.1.1",
     "picomatch": "^4.0.4",
-    "serialize-javascript": "^7.0.5"
+    "serialize-javascript": "^7.0.5",
+    "js-yaml@4": "^4.1.1"
   }
 }
