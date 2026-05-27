@@ -14,10 +14,18 @@ const defaults = getConfig();
 const azureAdAuthEnabled =
   process.env.AZURE_AD_AUTH_ENABLED?.toLowerCase() === "true";
 
+// Azure PostgreSQL Flexible Server requires SSL/TLS for all connections.
+// Without `ssl` set, node-postgres connects in plaintext and Azure's pg_hba.conf
+// rejects with: `no pg_hba.conf entry for host ... no encryption`.
+// `rejectUnauthorized: false` is sufficient for Azure-managed PG (the server
+// presents a valid Azure-issued certificate but the CA bundle is not always
+// available in the Node runtime), and matches the `sslmode=require` semantics
+// used by the ACI setup script.
 const poolConfig = azureAdAuthEnabled
   ? {
       ...defaults.postgres,
-      password: getAzureAdToken
+      password: getAzureAdToken,
+      ssl: { rejectUnauthorized: false },
     }
   : defaults.postgres;
 
