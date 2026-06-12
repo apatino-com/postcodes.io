@@ -1,4 +1,4 @@
-FROM postgis/postgis:16-3.4
+FROM postgis/postgis:18-3.6
 
 ARG PCIO_DB_NAME=postcodesiodb
 ENV PCIO_DB_NAME $PCIO_DB_NAME
