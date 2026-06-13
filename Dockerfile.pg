@@ -3,6 +3,6 @@ FROM postgis/postgis:18-3.6
 COPY latest /tmp/latest
 
 RUN mkdir -p /docker-entrypoint-initdb.d/ && \
-    apt-get update && apt-get install -y curl && \
+    apt-get update && apt-get install -y --no-install-recommends curl && \
     curl -o /docker-entrypoint-initdb.d/_postcodesiodata.sql.gz $(cat /tmp/latest)
 
