@@ -24,7 +24,7 @@ COPY package-lock.json .
 
 RUN npm install
 
-ADD . /app
+COPY . /app
 
 # Build TypeScript files
 RUN mkdir -p dist/bin && npm run build && ls -la dist/
