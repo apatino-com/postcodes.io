@@ -85,7 +85,7 @@
     "async": "~3.2.6",
     "cors": "~2.8.6",
     "csv": "~6.5.1",
-    "csv-parse": "~6.2.1",
+    "csv-parse": "~7.0.0",
     "docusaurus-plugin-openapi-docs": "~5.0.2",
     "docusaurus-theme-openapi-docs": "~5.0.2",
     "dotenv": "~17.4.2",
