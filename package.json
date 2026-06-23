@@ -97,7 +97,7 @@
     "morgan": "~1.11.0",
     "node.extend": "~2.0.3",
     "ospoint": "github:communitiesuk/ospoint",
-    "pg": "~8.21.0",
+    "pg": "~8.22.0",
     "pg-copy-streams": "~7.0.0",
     "pg-query-stream": "~4.15.0",
     "pino": "~10.3.1",
