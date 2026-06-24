@@ -99,7 +99,7 @@
     "ospoint": "github:communitiesuk/ospoint",
     "pg": "~8.22.0",
     "pg-copy-streams": "~7.0.0",
-    "pg-query-stream": "~4.15.0",
+    "pg-query-stream": "~4.16.0",
     "pino": "~10.3.1",
     "postcode": "~5.1.0",
     "prom-client": "~15.1.3",
