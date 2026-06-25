@@ -106,7 +106,7 @@
     "serve-favicon": "~2.5.1"
   },
   "devDependencies": {
-    "@babel/parser": "~7.29.7",
+    "@babel/parser": "~8.0.0",
     "@cablanchard/tsconfig": "~2.0.0",
     "@semantic-release/changelog": "~6.0.3",
     "@semantic-release/git": "~10.0.1",
