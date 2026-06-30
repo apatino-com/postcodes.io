@@ -1,0 +1,113 @@
+# Node.js Express Web App to Linux on Azure — PRODUCTION
+# Mirrors azure-pipelines.yml (test) but targets the prd App Service and is
+# triggered from main. Deploys via the Azure DevOps service connection
+# (azureSubscription), which uses an Azure AD token — not SCM basic auth —
+# so it works with webdeploy/ftp basic auth disabled on the App Service.
+
+trigger:
+  - main
+
+pr: none
+
+pool:
+  name: vmss-shared
+
+variables:
+  # Prod-scoped group: must provide azureSubscription (service connection) and
+  # environmentName for the prd App Service. Create/confirm in Azure DevOps.
+  - group: application-pipeline-vars-postcodes
+
+stages:
+  - stage: Build
+    displayName: Build stage
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          name: vmss-shared
+
+        steps:
+          - task: UseNode@1
+            inputs:
+              version: '24.x'
+            displayName: 'Install Node.js'
+
+          - script: |
+              npm install
+              npm run build
+              npm prune --production
+            displayName: 'npm install, build and prune'
+
+          - task: CopyFiles@2
+            displayName: 'Copy files to staging'
+            inputs:
+              SourceFolder: '$(System.DefaultWorkingDirectory)'
+              Contents: |
+                dist/**
+                bin/**
+                data/**
+                node_modules/**
+                package.json
+                package-lock.json
+                build/**
+                .deployment
+              TargetFolder: '$(Build.ArtifactStagingDirectory)/package'
+
+          - task: ArchiveFiles@2
+            displayName: 'Archive files'
+            inputs:
+              rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/package'
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+              replaceExistingArchive: true
+
+          - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+            artifact: drop
+
+  # Manual approval gate before the prod deploy. Uses a server-side
+  # ManualValidation task (not an ADO Environment with checks), so no
+  # Environment resource is required — consistent with the plain-job deploy.
+  - stage: ReviewDeploy
+    displayName: Approve prod deploy
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: waitForApproval
+        displayName: Wait for manual approval
+        pool: server
+        timeoutInMinutes: 1440
+        steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 1440
+            inputs:
+              # Set notifyUsers to the approver(s) email(s) if you want a
+              # notification; leaving it empty still requires a manual resume.
+              notifyUsers: ''
+              instructions: 'Approve deployment of postcodes.io to app-prd-uks-postcodes-001 (prd).'
+              onTimeout: 'reject'
+
+  - stage: Deploy
+    displayName: Deploy stage
+    dependsOn: ReviewDeploy
+    condition: succeeded()
+    jobs:
+      # Plain job (not a `deployment` job) so it doesn't require an ADO
+      # Environment resource. A plain job doesn't auto-download artifacts, so
+      # the build output is pulled in explicitly before deploy.
+      - job: Deploy
+        displayName: Deploy
+        pool:
+          name: vmss-shared
+        steps:
+          - download: current
+            artifact: drop
+          - task: AzureWebApp@1
+            displayName: 'Azure Web App Deploy: app-prd-uks-postcodes-001'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              appType: webAppLinux
+              appName: 'app-prd-uks-postcodes-001'
+              runtimeStack: 'NODE|24-lts'
+              package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+              startUpCommand: 'npm start'
