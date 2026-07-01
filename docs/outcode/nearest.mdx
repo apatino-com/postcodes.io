@@ -3,9 +3,9 @@ sidebar_label: "Nearest"
 title: "Find Nearest Outcode"
 ---
 
-Returns a list of outcodes nearest to the specified outcode, ordered by distance.
+Returns a list of outcodes nearest to the specified outcode, ordered by proximity.
 
-All standard outcode fields are returned for each result, plus a `distance` attribute (in metres from the specified outcode); if the input outcode is not found, the API returns a 404 response code.
+Each result has the same shape as a standard outcode lookup. If the input outcode is not found, the API returns a 404 response code.
 
 ## Endpoint
 
@@ -27,90 +27,96 @@ https://api.postcodes.io/outcodes/NW1/nearest
   "result": [
     {
       "outcode": "NW1",
-      "longitude": -0.139926,
-      "latitude": 51.52825,
-      "northings": 182304,
-      "eastings": 529158,
+      "longitude": -0.1438658506650539,
+      "latitude": 51.53338203264822,
+      "northings": 183241,
+      "eastings": 528839,
       "admin_district": [
         "Camden",
-        "Westminster",
-        "City of London"
+        "Westminster"
       ],
       "parish": [
         "Camden, unparished area",
-        "Westminster, unparished area",
-        "City of London, unparished area"
+        "Westminster, unparished area"
       ],
-      "admin_county": [],
+      "admin_county": [
+        "(pseudo) England (UA/MD/LB)"
+      ],
       "admin_ward": [
-        "Camden Town with Primrose Hill",
-        "Regent's Park",
-        "Marylebone High Street",
-        "Hyde Park",
-        "West End",
-        "Holborn and Covent Garden"
-      ],
-      "country": [
-        "England"
-      ],
-      "distance": 0
-    },
-    {
-      "outcode": "WC1",
-      "longitude": -0.118548,
-      "latitude": 51.519358,
-      "northings": 181819,
-      "eastings": 530724,
-      "admin_district": [
-        "Camden",
-        "Islington",
-        "Westminster",
-        "City of London"
-      ],
-      "parish": [
-        "Camden, unparished area",
-        "Islington, unparished area",
-        "Westminster, unparished area",
-        "City of London, unparished area"
-      ],
-      "admin_county": [],
-      "admin_ward": [
-        "King's Cross",
-        "Holborn and Covent Garden",
         "Bloomsbury",
-        "Clerkenwell",
-        "St Pancras and Somers Town",
+        "Camden Square",
+        "Camden Town",
+        "Church Street",
+        "Haverstock",
+        "Hyde Park",
+        "Kentish Town South",
+        "King's Cross",
+        "Marylebone",
+        "Primrose Hill",
+        "Regent's Park",
+        "St Pancras & Somers Town",
         "West End"
       ],
       "country": [
         "England"
       ],
-      "distance": 1598.694782
+      "parliamentary_constituency": [
+        "Cities of London and Westminster",
+        "Holborn and St Pancras",
+        "Queen's Park and Maida Vale"
+      ]
     },
     {
-      "outcode": "W1",
-      "longitude": -0.14224,
-      "latitude": 51.516759,
-      "northings": 181125,
-      "eastings": 528997,
+      "outcode": "NW1W",
+      "longitude": -0.135409513513515,
+      "latitude": 51.530792687259556,
+      "northings": 182968,
+      "eastings": 529433,
       "admin_district": [
-        "Westminster",
         "Camden"
       ],
       "parish": [
-        "Westminster, unparished area",
         "Camden, unparished area"
       ],
-      "admin_county": [],
+      "admin_county": [
+        "(pseudo) England (UA/MD/LB)"
+      ],
       "admin_ward": [
-        "Marylebone High Street",
-        "West End",
-        "Bloomsbury"
+        "Regent's Park"
       ],
       "country": [
         "England"
       ],
-      "distance": 1750.348773
+      "parliamentary_constituency": [
+        "Holborn and St Pancras"
+      ]
+    },
+    {
+      "outcode": "N1C",
+      "longitude": -0.1258825243902439,
+      "latitude": 51.53693576829269,
+      "northings": 183668,
+      "eastings": 530076,
+      "admin_district": [
+        "Camden"
+      ],
+      "parish": [
+        "Camden, unparished area"
+      ],
+      "admin_county": [
+        "(pseudo) England (UA/MD/LB)"
+      ],
+      "admin_ward": [
+        "Camden Square",
+        "King's Cross",
+        "St Pancras & Somers Town"
+      ],
+      "country": [
+        "England"
+      ],
+      "parliamentary_constituency": [
+        "Holborn and St Pancras"
+      ]
     }
   ]
 }

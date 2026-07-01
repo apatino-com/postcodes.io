@@ -1,20 +1,12 @@
 import request from "supertest";
-import { assert } from "chai";
+import { describe, expect, it, beforeEach } from "vitest";
 import * as helper from "./helper";
 const app = helper.postcodesioApplication();
 
 describe("Postcodes routes", () => {
-  before(async function () {
-    this.timeout(0);
-    await helper.clearPostcodeDb();
-    await helper.seedPostcodeDb();
-  });
-
   beforeEach(async () => {
     await helper.lookupRandomPostcode();
   });
-
-  after(async () => helper.clearPostcodeDb);
 
   describe("GET /postcodes/lon/:longitude/lat/latitude", () => {
     let loc: any;
@@ -23,153 +15,88 @@ describe("Postcodes routes", () => {
       loc = await helper.locationWithNearbyPostcodes();
     });
 
-    it("should return a list of nearby postcodes", (done) => {
+    it("should return a list of nearby postcodes", async () => {
       const uri = encodeURI(
         `/postcodes/lon/${loc.longitude}/lat/${loc.latitude}`
       );
 
-      request(app)
+      const response = await request(app)
         .get(uri)
         .expect("Content-Type", /json/)
         .expect(helper.allowsCORS)
-        .expect(200)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          assert.isArray(response.body.result);
-          assert.isTrue(response.body.result.length > 0);
-          response.body.result.forEach((postcode: any) => {
-            helper.isPostcodeWithDistanceObject(postcode);
-          });
-          assert.isTrue(
-            response.body.result.some((elem: any) => {
-              return elem.postcode === loc.postcode;
-            })
-          );
-          done();
-        });
+        .expect(200);
+      expect(Array.isArray(response.body.result)).toBe(true);
+      expect(response.body.result.length > 0).toBe(true);
+      response.body.result.forEach((postcode: any) => {
+        expect(typeof postcode.postcode).toBe("string");
+        expect(typeof postcode.distance).toBe("number");
+      });
+      expect(
+        response.body.result.some((elem: any) => elem.postcode === loc.postcode)
+      ).toBe(true);
     });
-    it("should be sensitive to distance query", (done) => {
+    it("should be sensitive to distance query", async () => {
       const uri = encodeURI(
         "/postcodes/lon/" + loc.longitude + "/lat/" + loc.latitude
       );
-      request(app)
+      const firstResponse = await request(app).get(uri).expect(200);
+      const secondResponse = await request(app)
         .get(uri)
-        .expect(200)
-        .end(function (error, firstResponse: any) {
-          if (error) return done(error);
-          request(app)
-            .get(uri)
-            .query({
-              radius: 2000,
-            })
-            .expect(200)
-            .end(function (error, secondResponse: any) {
-              if (error) return done(error);
-              assert.isTrue(
-                secondResponse.body.result.length >=
-                  firstResponse.body.result.length
-              );
-              done();
-            });
-        });
+        .query({ radius: 2000 })
+        .expect(200);
+      expect(
+        secondResponse.body.result.length >= firstResponse.body.result.length
+      ).toBe(true);
     });
-    it("should be sensitive to limit query", (done) => {
+    it("should be sensitive to limit query", async () => {
       const uri = encodeURI(
         "/postcodes/lon/" + loc.longitude + "/lat/" + loc.latitude
       );
-      request(app)
+      const response = await request(app)
         .get(uri)
-        .query({
-          limit: 1,
-        })
-        .expect(200)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          assert.equal(response.body.result.length, 1);
-          done();
-        });
+        .query({ limit: 1 })
+        .expect(200);
+      expect(response.body.result.length).toBe(1);
     });
-    it("should throw a 400 error if invalid longitude", (done) => {
+    it("should throw a 400 error if invalid longitude", async () => {
       const uri = encodeURI(
         "/postcodes/lon/" + "BOGUS" + "/lat/" + loc.latitude
       );
-      request(app)
-        .get(uri)
-        .expect(400)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          done();
-        });
+      await request(app).get(uri).expect(400);
     });
-    it("should throw a 400 error if invalid latitude", (done) => {
+    it("should throw a 400 error if invalid latitude", async () => {
       const uri = encodeURI(
         "/postcodes/lon/" + loc.longitude + "/lat/" + "BOGUS"
       );
-      request(app)
-        .get(uri)
-        .expect(400)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          done();
-        });
+      await request(app).get(uri).expect(400);
     });
-    it("should throw a 400 error if invalid limit", (done) => {
+    it("should throw a 400 error if invalid limit", async () => {
       const uri = encodeURI(
         "/postcodes/lon/" + loc.longitude + "/lat/" + loc.latitude
       );
-      request(app)
-        .get(uri)
-        .query({
-          limit: "BOGUS",
-        })
-        .expect(400)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          done();
-        });
+      await request(app).get(uri).query({ limit: "BOGUS" }).expect(400);
     });
-    it("should throw a 400 error if invalid distance", (done) => {
+    it("should throw a 400 error if invalid distance", async () => {
       const uri = encodeURI(
         "/postcodes/lon/" + loc.longitude + "/lat/" + loc.latitude
       );
-      request(app)
-        .get(uri)
-        .query({
-          radius: "BOGUS",
-        })
-        .expect(400)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          done();
-        });
+      await request(app).get(uri).query({ radius: "BOGUS" }).expect(400);
     });
-    it("returns null if no postcodes nearby", (done) => {
+    it("returns null if no postcodes nearby", async () => {
       const uri = encodeURI("/postcodes/lon/0/lat/0");
-      request(app)
-        .get(uri)
-        .expect(200)
-        .end(function (error, response: any) {
-          if (error) done(error);
-          assert.isNull(response.body.result);
-          done();
-        });
+      const response = await request(app).get(uri).expect(200);
+      expect(response.body.result).toBeNull();
     });
-    it("should respond to options", (done) => {
+    it("should respond to options", async () => {
       const uri = encodeURI(
         "/postcodes/lon/" + loc.longitude + "/lat/" + loc.latitude
       );
-      request(app)
-        .options(uri)
-        .expect(204)
-        .end(function (error, response: any) {
-          if (error) done(error);
-          helper.validCorsOptions(response);
-          done();
-        });
+      const response = await request(app).options(uri).expect(204);
+      helper.validCorsOptions(response);
     });
   });
 
-  describe("GET /postcodes?lon=:longitude&lat=:latitude", function () {
+  describe("GET /postcodes?lon=:longitude&lat=:latitude", () => {
     let loc: any, uri: string;
 
     beforeEach(async () => {
@@ -177,286 +104,158 @@ describe("Postcodes routes", () => {
       loc = await helper.locationWithNearbyPostcodes();
     });
 
-    it("returns a list of nearby postcodes", (done) => {
-      request(app)
+    it("returns a list of nearby postcodes", async () => {
+      const response = await request(app)
         .get(uri)
-        .query({
-          lon: loc.longitude,
-          lat: loc.latitude,
-        })
+        .query({ lon: loc.longitude, lat: loc.latitude })
         .expect("Content-Type", /json/)
         .expect(helper.allowsCORS)
-        .expect(200)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          assert.isArray(response.body.result);
-          assert.isTrue(response.body.result.length > 0);
-          response.body.result.forEach(function (postcode: any) {
-            helper.isPostcodeWithDistanceObject(postcode);
-          });
-          assert.isTrue(
-            response.body.result.some(function (elem: any) {
-              return elem.postcode === loc.postcode;
-            })
-          );
-          done();
-        });
+        .expect(200);
+      expect(Array.isArray(response.body.result)).toBe(true);
+      expect(response.body.result.length > 0).toBe(true);
+      response.body.result.forEach((postcode: any) => {
+        expect(typeof postcode.postcode).toBe("string");
+        expect(typeof postcode.distance).toBe("number");
+      });
+      expect(
+        response.body.result.some((elem: any) => elem.postcode === loc.postcode)
+      ).toBe(true);
     });
-    it("accepts full spelling of longitude and latitude", (done) => {
-      request(app)
+    it("accepts full spelling of longitude and latitude", async () => {
+      const response = await request(app)
         .get(uri)
-        .query({
-          longitude: loc.longitude,
-          latitude: loc.latitude,
-        })
+        .query({ longitude: loc.longitude, latitude: loc.latitude })
         .expect("Content-Type", /json/)
         .expect(helper.allowsCORS)
-        .expect(200)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          assert.isArray(response.body.result);
-          assert.isTrue(response.body.result.length > 0);
-          response.body.result.forEach(function (postcode: any) {
-            helper.isPostcodeWithDistanceObject(postcode);
-          });
-          assert.isTrue(
-            response.body.result.some(function (elem: any) {
-              return elem.postcode === loc.postcode;
-            })
-          );
-          done();
-        });
+        .expect(200);
+      expect(Array.isArray(response.body.result)).toBe(true);
+      expect(response.body.result.length > 0).toBe(true);
+      response.body.result.forEach((postcode: any) => {
+        expect(typeof postcode.postcode).toBe("string");
+        expect(typeof postcode.distance).toBe("number");
+      });
+      expect(
+        response.body.result.some((elem: any) => elem.postcode === loc.postcode)
+      ).toBe(true);
     });
-    it("falls back to a postcode query if longitude is missing", (done) => {
-      request(app)
+    it("falls back to a postcode query if longitude is missing", async () => {
+      const response = await request(app)
         .get(uri)
-        .query({
-          latitude: loc.latitude,
-        })
+        .query({ latitude: loc.latitude })
         .expect("Content-Type", /json/)
         .expect(helper.allowsCORS)
-        .expect(400)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          assert.equal(response.body.status, 400);
-          done();
-        });
+        .expect(400);
+      expect(response.body.status).toBe(400);
     });
-    it("falls back to a postcode query if latitude is missing", (done) => {
-      request(app)
+    it("falls back to a postcode query if latitude is missing", async () => {
+      const response = await request(app)
         .get(uri)
-        .query({
-          longitude: loc.longitude,
-        })
+        .query({ longitude: loc.longitude })
         .expect("Content-Type", /json/)
         .expect(helper.allowsCORS)
-        .expect(400)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          assert.equal(response.body.status, 400);
-          done();
-        });
+        .expect(400);
+      expect(response.body.status).toBe(400);
     });
-    it("is sensitive to distance query", (done) => {
-      request(app)
+    it("is sensitive to distance query", async () => {
+      const firstResponse = await request(app)
         .get(uri)
-        .query({
-          lon: loc.longitude,
-          lat: loc.latitude,
-        })
-        .expect(200)
-        .end(function (error, firstResponse: any) {
-          if (error) return done(error);
-          request(app)
-            .get(uri)
-            .query({
-              lon: loc.longitude,
-              lat: loc.latitude,
-              radius: 2000,
-            })
-            .expect(200)
-            .end(function (error, secondResponse: any) {
-              if (error) return done(error);
-              assert.isTrue(
-                secondResponse.body.result.length >=
-                  firstResponse.body.result.length
-              );
-              done();
-            });
-        });
-    });
-    it("is sensitive to limit query", (done) => {
-      request(app)
+        .query({ lon: loc.longitude, lat: loc.latitude })
+        .expect(200);
+      const secondResponse = await request(app)
         .get(uri)
-        .query({
-          lon: loc.longitude,
-          lat: loc.latitude,
-          limit: 1,
-        })
-        .expect(200)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          assert.equal(response.body.result.length, 1);
-          done();
-        });
+        .query({ lon: loc.longitude, lat: loc.latitude, radius: 2000 })
+        .expect(200);
+      expect(
+        secondResponse.body.result.length >= firstResponse.body.result.length
+      ).toBe(true);
     });
-    it("returns a 400 error if invalid longitude", (done) => {
-      request(app)
+    it("is sensitive to limit query", async () => {
+      const response = await request(app)
         .get(uri)
-        .query({
-          lon: "BOGUS",
-          lat: loc.latitude,
-        })
-        .expect(400)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          done();
-        });
+        .query({ lon: loc.longitude, lat: loc.latitude, limit: 1 })
+        .expect(200);
+      expect(response.body.result.length).toBe(1);
     });
-    it("returns a 400 error if invalid latitude", (done) => {
-      request(app)
+    it("returns a 400 error if invalid longitude", async () => {
+      await request(app)
         .get(uri)
-        .query({
-          lon: loc.longitude,
-          lat: "BOGUS",
-        })
-        .expect(400)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          done();
-        });
+        .query({ lon: "BOGUS", lat: loc.latitude })
+        .expect(400);
     });
-    it("returns a 400 error if invalid limit", (done) => {
-      request(app)
+    it("returns a 400 error if invalid latitude", async () => {
+      await request(app)
         .get(uri)
-        .query({
-          lon: loc.longitude,
-          lat: loc.latitude,
-          limit: "BOGUS",
-        })
-        .expect(400)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          done();
-        });
+        .query({ lon: loc.longitude, lat: "BOGUS" })
+        .expect(400);
     });
-    it("returns a 400 error if invalid distance", (done) => {
-      request(app)
+    it("returns a 400 error if invalid limit", async () => {
+      await request(app)
         .get(uri)
-        .query({
-          lon: loc.longitude,
-          lat: loc.latitude,
-          radius: "BOGUS",
-        })
-        .expect(400)
-        .end(function (error, response: any) {
-          if (error) return done(error);
-          done();
-        });
+        .query({ lon: loc.longitude, lat: loc.latitude, limit: "BOGUS" })
+        .expect(400);
     });
-    it("returns null if no postcodes nearby", (done) => {
+    it("returns a 400 error if invalid distance", async () => {
+      await request(app)
+        .get(uri)
+        .query({ lon: loc.longitude, lat: loc.latitude, radius: "BOGUS" })
+        .expect(400);
+    });
+    it("returns null if no postcodes nearby", async () => {
       const uri = encodeURI("/postcodes");
-      request(app)
+      const response = await request(app)
         .get(uri)
-        .query({
-          lat: 0,
-          lon: 0,
-        })
-        .expect(200)
-        .end(function (error, response: any) {
-          if (error) done(error);
-          assert.isNull(response.body.result);
-          done();
-        });
+        .query({ lat: 0, lon: 0 })
+        .expect(200);
+      expect(response.body.result).toBeNull();
     });
-    it("responds to options", (done) => {
-      request(app)
-        .options(uri)
-        .expect(204)
-        .end(function (error, response: any) {
-          if (error) done(error);
-          helper.validCorsOptions(response);
-          done();
-        });
+    it("responds to options", async () => {
+      const response = await request(app).options(uri).expect(204);
+      helper.validCorsOptions(response);
     });
-    describe("Wide Area Searches", function () {
+    describe("Wide Area Searches", () => {
       let longitude: any, latitude: any;
-      beforeEach(function () {
+      beforeEach(() => {
         longitude = -2.12659411941741;
         latitude = 57.2465923827836;
       });
-      it("allows search over a larger area", (done) => {
-        request(app)
+      it("allows search over a larger area", async () => {
+        const response = await request(app)
           .get("/postcodes")
-          .query({
-            longitude: longitude,
-            latitude: latitude,
-            wideSearch: true,
-          })
+          .query({ longitude, latitude, wideSearch: true })
           .expect("Content-Type", /json/)
           .expect(helper.allowsCORS)
-          .expect(200)
-          .end(function (error, response: any) {
-            if (error) return done(error);
-            assert.equal(response.body.result.length, 10);
-            done();
-          });
+          .expect(200);
+        expect(response.body.result.length).toBe(10);
       });
 
-      it("allows search over a larger area using 'widesearch'", (done) => {
-        request(app)
+      it("allows search over a larger area using 'widesearch'", async () => {
+        const response = await request(app)
           .get("/postcodes")
-          .query({
-            longitude: longitude,
-            latitude: latitude,
-            widesearch: true,
-          })
+          .query({ longitude, latitude, widesearch: true })
           .expect("Content-Type", /json/)
           .expect(helper.allowsCORS)
-          .expect(200)
-          .end(function (error, response: any) {
-            if (error) return done(error);
-            assert.equal(response.body.result.length, 10);
-            done();
-          });
+          .expect(200);
+        expect(response.body.result.length).toBe(10);
       });
 
-      it("does not allow limit to exceed 10", (done) => {
-        request(app)
+      it("does not allow limit to exceed 10", async () => {
+        const response = await request(app)
           .get("/postcodes")
-          .query({
-            longitude: longitude,
-            latitude: latitude,
-            limit: 100,
-            wideSearch: true,
-          })
+          .query({ longitude, latitude, limit: 100, wideSearch: true })
           .expect("Content-Type", /json/)
           .expect(helper.allowsCORS)
-          .expect(200)
-          .end(function (error, response: any) {
-            if (error) return done(error);
-            assert.equal(response.body.result.length, 10);
-            done();
-          });
+          .expect(200);
+        expect(response.body.result.length).toBe(10);
       });
 
-      it("does allows limit to be below 10", (done) => {
-        request(app)
+      it("does allows limit to be below 10", async () => {
+        const response = await request(app)
           .get("/postcodes")
-          .query({
-            longitude: longitude,
-            latitude: latitude,
-            limit: 1,
-            wideSearch: true,
-          })
+          .query({ longitude, latitude, limit: 1, wideSearch: true })
           .expect("Content-Type", /json/)
           .expect(helper.allowsCORS)
-          .expect(200)
-          .end(function (error, response: any) {
-            if (error) return done(error);
-            assert.equal(response.body.result.length, 1);
-            done();
-          });
+          .expect(200);
+        expect(response.body.result.length).toBe(1);
       });
     });
   });

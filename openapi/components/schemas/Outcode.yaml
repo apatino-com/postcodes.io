@@ -9,6 +9,7 @@ required:
   - latitude
   - country
   - parish
+  - parliamentary_constituency
 properties:
   outcode:
     title: Outcode
@@ -35,7 +36,7 @@ properties:
     items:
       type: string
     description: Administrative counties within this outcode.
-    example: []
+    example: ["(pseudo) England (UA/MD/LB)"]
   admin_district:
     title: District
     type: array
@@ -78,3 +79,10 @@ properties:
       type: string
     description: Parishes (England) or communities (Wales) within this outcode.
     example: ["Wandsworth, unparished area", "Westminster, unparished area"]
+  parliamentary_constituency:
+    title: Parliamentary Constituency
+    type: array
+    items:
+      type: string
+    description: UK Parliamentary constituencies (July 2024 boundaries) that intersect this outcode.
+    example: ["Cities of London and Westminster", "Battersea"]

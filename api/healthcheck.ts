@@ -1,6 +1,7 @@
 import http from "http";
 
-const prefix = process.env.URL_PREFIX === undefined ? "" : process.env.URL_PREFIX
+const prefix =
+  process.env.URL_PREFIX === undefined ? "" : process.env.URL_PREFIX;
 
 const options = {
   host: "localhost",

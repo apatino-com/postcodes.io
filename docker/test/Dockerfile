@@ -1,32 +1,22 @@
-FROM node:24-alpine AS base
+FROM node:24-slim
 
-RUN apk update && \
-  apk upgrade && \
-  apk add --no-cache openssl bash git
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends openssl bash git postgresql-client ca-certificates wget && \
+  rm -rf /var/lib/apt/lists/* && \
+  corepack enable
 
-ENV DOCKERIZE_VERSION v0.6.1
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+ENV DOCKERIZE_VERSION=v0.6.1
+RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 COPY docker/test/entrypoint.sh /usr/bin/
 ENTRYPOINT ["entrypoint.sh"]
 
-RUN mkdir -p /home/node/app/.npm \
-  && chown -R node:node /home/node/app/.npm
-
-ENV npm_config_cache /home/node/app/.npm
-
 WORKDIR /app
 
-COPY package.json .
-COPY package-lock.json .
+# No `pnpm install` here. The docker-compose mount bind-mounts the host repo
+# over /app at runtime, so any node_modules baked in here gets shadowed.
+# pnpm 11's deps-status-check auto-installs on first script run.
 
-RUN npm install
-
-COPY . /app
-
-# Build TypeScript files
-RUN mkdir -p dist/bin && npm run build && ls -la dist/
-
-CMD tail
+CMD ["tail"]

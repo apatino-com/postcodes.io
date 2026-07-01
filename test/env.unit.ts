@@ -1,34 +1,32 @@
-"use strict";
-
-import { assert } from "chai";
+import { describe, expect, it } from "vitest";
 import { parseEnv } from "../api/app/lib/env";
 
 describe("parseEnv", () => {
   it("returns default if variable is undefined", () => {
     const defaultValue = "foo";
-    assert.equal(parseEnv(undefined, defaultValue), defaultValue);
+    expect(parseEnv(undefined, defaultValue)).toBe(defaultValue);
   });
 
   it("returns true if variable is `true`", () => {
-    assert.equal(parseEnv("true"), true);
+    expect(parseEnv("true")).toBe(true);
   });
 
   it("returns false if variable is `false`", () => {
-    assert.equal(parseEnv("false"), false);
+    expect(parseEnv("false")).toBe(false);
   });
 
   it("returns number if varaible is `number`", () => {
-    assert.equal(parseEnv("8"), 8);
+    expect(parseEnv("8")).toBe(8);
   });
   it("returns string if variable is `string`", () => {
-    assert.equal(parseEnv("FOO"), "FOO");
+    expect(parseEnv("FOO")).toBe("FOO");
   });
 
   it("returns null if variable is 'null'", () => {
-    assert.equal(parseEnv("null"), null);
+    expect(parseEnv("null")).toBe(null);
   });
 
   it("returns empty string if variable is ''", () => {
-    assert.equal(parseEnv(""), "");
+    expect(parseEnv("")).toBe("");
   });
 });

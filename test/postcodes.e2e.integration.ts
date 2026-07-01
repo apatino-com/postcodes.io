@@ -1,5 +1,5 @@
 import request from "supertest";
-import { assert } from "chai";
+import { describe, expect, it } from "vitest";
 import * as helper from "./helper/index";
 const app = helper.postcodesioApplication();
 
@@ -15,17 +15,9 @@ const app = helper.postcodesioApplication();
  * - Lookup table joins work correctly (districts, wards, constituencies, etc.)
  * - New fields (lsoa21, msoa21, lsoa11, msoa11, etc.) are populated correctly
  */
-describe("Postcodes E2E", function () {
-  before(async function () {
-    this.timeout(0);
-    await helper.clearPostcodeDb();
-    await helper.seedPostcodeDb();
-  });
-
-  after(async () => helper.clearPostcodeDb());
-
-  describe("GET /postcodes/:postcode", function () {
-    it("returns exact expected response for AB10 1AB", function (done) {
+describe("Postcodes E2E", () => {
+  describe("GET /postcodes/:postcode", () => {
+    it("returns exact expected response for AB10 1AB", async () => {
       const expectedResponse: Record<string, unknown> = {
         postcode: "AB10 1AB",
         quality: 1,
@@ -44,10 +36,14 @@ describe("Postcodes E2E", function () {
         outcode: "AB10",
         parliamentary_constituency: "Aberdeen South",
         parliamentary_constituency_2024: "Aberdeen South",
+        senedd_constituency: null,
+        senedd_constituency_no: null,
         admin_district: "Aberdeen City",
         parish: null,
         admin_county: null,
         date_of_introduction: "201106",
+        date_of_termination: null,
+        index_of_multiple_deprivation: 3888,
         admin_ward: "George St/Harbour",
         ced: null,
         ccg: "Aberdeen City Community Health Partnership",
@@ -56,9 +52,9 @@ describe("Postcodes E2E", function () {
         // New fields (Nov 2025)
         nhs_region: null,
         ttwa: "Aberdeen",
-        national_park: null,
+        national_park: "(pseudo) Scotland (non-National Park)",
         bua: null,
-        icb: null,
+        icb: "Scotland",
         cancer_alliance: null,
         lsoa11: "George Street - 02",
         msoa11: "George Street",
@@ -84,7 +80,6 @@ describe("Postcodes E2E", function () {
           msoa: "S02002541",
           lau2: "S30000026",
           pfa: "S23000009",
-          // New codes (Nov 2025)
           nhs_region: "S99999999",
           ttwa: "S22000047",
           national_park: "S99999999",
@@ -103,19 +98,15 @@ describe("Postcodes E2E", function () {
         },
       };
 
-      request(app)
+      const response = await request(app)
         .get("/postcodes/AB10%201AB")
         .expect("Content-Type", /json/)
-        .expect(200)
-        .end(function (error, response) {
-          if (error) return done(error);
-          assert.equal(response.body.status, 200);
-          assert.deepEqual(response.body.result, expectedResponse);
-          done();
-        });
+        .expect(200);
+      expect(response.body.status).toBe(200);
+      expect(response.body.result).toEqual(expectedResponse);
     });
 
-    it("returns exact expected response for SE1P 5ZZ", function (done) {
+    it("returns exact expected response for SE1P 5ZZ", async () => {
       const expectedResponse: Record<string, unknown> = {
         postcode: "SE1P 5ZZ",
         quality: 1,
@@ -134,10 +125,14 @@ describe("Postcodes E2E", function () {
         outcode: "SE1P",
         parliamentary_constituency: "Bermondsey and Old Southwark",
         parliamentary_constituency_2024: "Bermondsey and Old Southwark",
+        senedd_constituency: null,
+        senedd_constituency_no: null,
         admin_district: "Southwark",
         parish: "Southwark, unparished area",
         admin_county: null,
         date_of_introduction: "201008",
+        date_of_termination: null,
+        index_of_multiple_deprivation: 8253,
         admin_ward: "London Bridge & West Bermondsey",
         ced: null,
         ccg: "NHS South East London",
@@ -174,7 +169,6 @@ describe("Postcodes E2E", function () {
           msoa: "E02000812",
           lau2: "E09000028",
           pfa: "E23000001",
-          // New codes (Nov 2025)
           nhs_region: "E40000003",
           ttwa: "E30000234",
           national_park: "E65000001",
@@ -193,16 +187,12 @@ describe("Postcodes E2E", function () {
         },
       };
 
-      request(app)
+      const response = await request(app)
         .get("/postcodes/SE1P%205ZZ")
         .expect("Content-Type", /json/)
-        .expect(200)
-        .end(function (error, response) {
-          if (error) return done(error);
-          assert.equal(response.body.status, 200);
-          assert.deepEqual(response.body.result, expectedResponse);
-          done();
-        });
+        .expect(200);
+      expect(response.body.status).toBe(200);
+      expect(response.body.result).toEqual(expectedResponse);
     });
   });
 });

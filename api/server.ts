@@ -1,4 +1,3 @@
-import { Express } from "express";
 import { getConfig } from "./config/config";
 const config = getConfig();
 import App from "./app";

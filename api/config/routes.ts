@@ -1,5 +1,5 @@
 import express from "express";
-import { join } from "path";
+import { join } from "node:path";
 import { Express } from "express";
 import * as utils from "../app/controllers/utils_controller";
 import * as places from "../app/controllers/places_controller";

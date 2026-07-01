@@ -2,13 +2,15 @@ FROM node:24-alpine AS base
 
 RUN apk update && apk upgrade && apk add --no-cache bash
 
+RUN corepack enable
+
 WORKDIR /app
 
 COPY . .
 
-RUN npm ci && \
-    npm cache clean --force && \
-    npm run build
+RUN pnpm install --frozen-lockfile && \
+    pnpm store prune && \
+    pnpm run build
 
 FROM base AS install
 

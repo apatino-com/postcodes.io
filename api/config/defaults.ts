@@ -6,23 +6,13 @@ const {
   SEARCH_LIMIT_DEFAULT,
   SEARCH_LIMIT_MAX,
   BULKGEOCODE_GEOLOCATIONS_MAX,
-  BULKGEOCODE_GEOLOCATIONS_ASYNC_LIMIT,
-  BULKGEOCODE_GEOLOCATIONS_TIMEOUT,
   BULKLOOKUPS_POSTCODES_MAX,
-  BULKLOOKUPS_POSTCODES_ASYNC_LIMIT,
-  BULKLOOKUPS_POSTCODES_TIMEOUT,
   NEARESTOUTCODES_RADIUS_DEFAULT,
   NEARESTOUTCODES_RADIUS_MAX,
   NEARESTOUTCODES_LIMIT_DEFAULT,
   NEARESTOUTCODES_LIMIT_MAX,
   PLACESSEARCH_LIMIT_DEFAULT,
   PLACESSEARCH_LIMIT_MAX,
-  PLACESCONTAINED_LIMIT_DEFAULT,
-  PLACESCONTAINED_LIMIT_MAX,
-  PLACESNEAREST_LIMIT_DEFAULT,
-  PLACESNEAREST_LIMIT_MAX,
-  PLACESNEAREST_RADIUS_DEFAULT,
-  PLACESNEAREST_RADIUS_MAX,
 } = process.env;
 
 import { parseEnv } from "../app/lib/env";
@@ -47,15 +37,11 @@ export const defaults = {
   bulkGeocode: {
     geolocations: {
       MAX: parseEnv(BULKGEOCODE_GEOLOCATIONS_MAX, 100), // Maximum number of geolocations per request
-      ASYNC_LIMIT: parseEnv(BULKGEOCODE_GEOLOCATIONS_ASYNC_LIMIT, null), // Maximum number of parallel DB queries per request
-      TIMEOUT: parseEnv(BULKGEOCODE_GEOLOCATIONS_TIMEOUT, 30000), // Maximum interval to run a single bulk request
     },
   },
   bulkLookups: {
     postcodes: {
       MAX: parseEnv(BULKLOOKUPS_POSTCODES_MAX, 100), // Maximum number of postcodes per request
-      ASYNC_LIMIT: parseEnv(BULKLOOKUPS_POSTCODES_ASYNC_LIMIT, null), // Maximum number of parallel DB queries per request
-      TIMEOUT: parseEnv(BULKLOOKUPS_POSTCODES_TIMEOUT, 30000), // Maximum interval to run a single bulk request
     },
   },
   nearestOutcodes: {
@@ -72,22 +58,6 @@ export const defaults = {
     limit: {
       DEFAULT: parseEnv(PLACESSEARCH_LIMIT_DEFAULT, 10),
       MAX: parseEnv(PLACESSEARCH_LIMIT_MAX, 100),
-    },
-  },
-  placesContained: {
-    limit: {
-      DEFAULT: parseEnv(PLACESCONTAINED_LIMIT_DEFAULT, 10),
-      MAX: parseEnv(PLACESCONTAINED_LIMIT_MAX, 100),
-    },
-  },
-  placesNearest: {
-    limit: {
-      DEFAULT: parseEnv(PLACESNEAREST_LIMIT_DEFAULT, 10),
-      MAX: parseEnv(PLACESNEAREST_LIMIT_MAX, 100),
-    },
-    radius: {
-      DEFAULT: parseEnv(PLACESNEAREST_RADIUS_DEFAULT, 1000),
-      MAX: parseEnv(PLACESNEAREST_RADIUS_MAX, 10000),
     },
   },
   filterableAttributes: [

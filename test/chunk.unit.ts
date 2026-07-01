@@ -1,18 +1,18 @@
-import { assert } from "chai";
+import { describe, expect, it } from "vitest";
 import { chunk } from "../api/app/lib/chunk";
 
 describe("chunk", () => {
   it("chunks arrays", () => {
-    assert.deepEqual(chunk([1, 1, 1, 2, 2, 2, 3, 3, 3], 3), [
+    expect(chunk([1, 1, 1, 2, 2, 2, 3, 3, 3], 3)).toEqual([
       [1, 1, 1],
       [2, 2, 2],
       [3, 3, 3],
     ]);
-    assert.deepEqual(chunk([1, 1, 1, 2, 2, 2, 3, 3], 3), [
+    expect(chunk([1, 1, 1, 2, 2, 2, 3, 3], 3)).toEqual([
       [1, 1, 1],
       [2, 2, 2],
       [3, 3],
     ]);
-    assert.deepEqual(chunk([1, 1], 3), [[1, 1]]);
+    expect(chunk([1, 1], 3)).toEqual([[1, 1]]);
   });
 });

@@ -9,76 +9,80 @@ The Postcode schema represents all geographical and administrative information a
 
 ```json
 {
-  "postcode": "BR8 7RE",
+  "postcode": "SW1A 1AA",
   "quality": 1,
-  "eastings": 551626,
-  "northings": 170342,
+  "eastings": 529090,
+  "northings": 179645,
   "country": "England",
-  "nhs_ha": "South East Coast",
-  "longitude": 0.178871,
-  "latitude": 51.411831,
-  "european_electoral_region": "South East",
-  "primary_care_trust": "West Kent",
-  "region": "South East",
-  "lsoa": "Sevenoaks 001A",
-  "msoa": "Sevenoaks 001",
-  "incode": "7RE",
-  "outcode": "BR8",
-  "parliamentary_constituency": "Sevenoaks",
-  "parliamentary_constituency_2024": "Sevenoaks",
-  "admin_district": "Sevenoaks",
-  "parish": "Hextable",
-  "admin_county": "Kent",
+  "nhs_ha": "London",
+  "longitude": -0.141563,
+  "latitude": 51.50101,
+  "european_electoral_region": "London",
+  "primary_care_trust": "Westminster",
+  "region": "London",
+  "lsoa": "Westminster 018C",
+  "msoa": "Westminster 018",
+  "incode": "1AA",
+  "outcode": "SW1A",
+  "parliamentary_constituency": "Cities of London and Westminster",
+  "parliamentary_constituency_2024": "Cities of London and Westminster",
+  "senedd_constituency": null,
+  "senedd_constituency_no": null,
+  "admin_district": "Westminster",
+  "parish": "Westminster, unparished area",
+  "admin_county": "(pseudo) England (UA/MD/LB)",
   "date_of_introduction": "198001",
-  "admin_ward": "Hextable",
-  "ced": "Swanley",
-  "ccg": "NHS Kent and Medway",
-  "nuts": "Sevenoaks",
-  "pfa": "Kent",
-  "nhs_region": "South East",
-  "ttwa": "Maidstone and North Kent",
-  "national_park": null,
-  "bua": "Swanley",
-  "icb": "NHS Kent and Medway Integrated Care Board",
-  "cancer_alliance": "Kent and Medway Cancer Alliance",
-  "lsoa11": "Sevenoaks 001A",
-  "msoa11": "Sevenoaks 001",
-  "lsoa21": "Sevenoaks 001A",
-  "msoa21": "Sevenoaks 001",
-  "oa21": "E00058164",
-  "ruc11": "Urban city and town",
-  "ruc21": "Urban city and town",
-  "lep1": "South East",
+  "date_of_termination": null,
+  "index_of_multiple_deprivation": 24862,
+  "admin_ward": "St James's",
+  "ced": null,
+  "ccg": "NHS North West London",
+  "nuts": "Westminster",
+  "pfa": "Metropolitan Police",
+  "nhs_region": "London",
+  "ttwa": "London",
+  "national_park": "England (non-National Park)",
+  "bua": "City of Westminster",
+  "icb": "NHS North West London Integrated Care Board",
+  "cancer_alliance": "West London",
+  "lsoa11": "Westminster 018C",
+  "msoa11": "Westminster 018",
+  "lsoa21": "Westminster 018C",
+  "msoa21": "Westminster 018",
+  "oa21": "E00023938",
+  "ruc11": "(England/Wales) Urban major conurbation",
+  "ruc21": "Urban: Nearer to a major town or city",
+  "lep1": "London",
   "lep2": null,
   "codes": {
-    "admin_district": "E07000111",
-    "admin_county": "E10000016",
-    "admin_ward": "E05009960",
-    "parish": "E04012394",
-    "parliamentary_constituency": "E14001465",
-    "parliamentary_constituency_2024": "E14001465",
-    "ccg": "E38000237",
-    "ccg_id": "91Q",
-    "ced": "E58000739",
-    "nuts": "TLJ46",
-    "lsoa": "E01024445",
-    "msoa": "E02005087",
-    "lau2": "E07000111",
-    "pfa": "E23000032",
-    "nhs_region": "E40000005",
-    "ttwa": "E30000188",
-    "national_park": null,
-    "bua": "E34001422",
-    "icb": "E54000032",
-    "cancer_alliance": "E56000004",
-    "lsoa11": "E01024445",
-    "msoa11": "E02005087",
-    "lsoa21": "E01024445",
-    "msoa21": "E02005087",
-    "oa21": "E00058164",
-    "ruc11": "C1",
-    "ruc21": "C1",
-    "lep1": "E37000025",
+    "admin_district": "E09000033",
+    "admin_county": "E99999999",
+    "admin_ward": "E05013806",
+    "parish": "E43000236",
+    "parliamentary_constituency": "E14001172",
+    "parliamentary_constituency_2024": "E14001172",
+    "ccg": "E38000256",
+    "ccg_id": "W2U3Z",
+    "ced": "E99999999",
+    "nuts": "TLI35",
+    "lsoa": "E01004736",
+    "msoa": "E02000977",
+    "lau2": "E09000033",
+    "pfa": "E23000001",
+    "nhs_region": "E40000003",
+    "ttwa": "E30000234",
+    "national_park": "E65000001",
+    "bua": "E63012036",
+    "icb": "E54000027",
+    "cancer_alliance": "E56000021",
+    "lsoa11": "E01004736",
+    "msoa11": "E02000977",
+    "lsoa21": "E01004736",
+    "msoa21": "E02000977",
+    "oa21": "E00023938",
+    "ruc11": "A1",
+    "ruc21": "UN1",
+    "lep1": "E37000051",
     "lep2": null
   }
 }
@@ -96,7 +100,7 @@ The Postcode schema represents all geographical and administrative information a
 | `northings`                  | integer \| null | Ordnance Survey grid reference northing (Y-coordinate) with 1-meter resolution. May be null if geolocation unavailable.                   | 179951                             |
 | `country`                    | string          | The UK constituent country for this postcode (England, Scotland, Wales, Northern Ireland, Channel Islands, or Isle of Man).               | "England"                          |
 | `nhs_ha`                     | string \| null  | The NHS health authority area for this postcode.                                                                                          | "London"                           |
-| `admin_county`               | string \| null  | The administrative county for this postcode. May be empty for areas without county-level administration.                                  | ""                                 |
+| `admin_county`               | string \| null  | The administrative county for this postcode. Null where the postcode falls outside a county-level authority (the underlying GSS code is then a pseudo such as `E99999999`, surfaced under `codes.admin_county`). | null                               |
 | `admin_district`             | string \| null  | The administrative district or unitary authority for this postcode.                                                                       | "Westminster"                      |
 | `admin_ward`                 | string \| null  | The electoral/administrative ward for this postcode.                                                                                      | "St. James's"                      |
 | `longitude`                  | number \| null  | WGS84 longitude coordinate (east-west position). May be null if geolocation unavailable.                                                  | -0.12767                           |
@@ -116,6 +120,7 @@ The Postcode schema represents all geographical and administrative information a
 | `codes.admin_county`         | string \| null  | Official 9-character GSS code for this administrative county.                                                                             | "E99999999"                        |
 | `codes.admin_ward`           | string \| null  | Official 9-character GSS code for this administrative ward.                                                                               | "E05013806"                        |
 | `codes.parish`               | string \| null  | Official 9-character GSS code for this parish.                                                                                            | "E43000236"                        |
+| `codes.parliamentary_constituency` | string \| null | Official 9-character GSS code for this Parliamentary Constituency (July 2024 boundaries). Alias for `codes.parliamentary_constituency_2024`. | "E14000639"                  |
 | `codes.ccg`                  | string \| null  | Official 9-character GSS code for this Clinical Commissioning Group.                                                                      | "E38000256"                        |
 | `codes.ccg_id`               | string \| null  | Short code identifier for this Clinical Commissioning Group.                                                                              | "W2U3Z"                            |
 | `codes.ced`                  | string \| null  | Official 9-character GSS code for this County Electoral District.                                                                         | "E99999999"                        |
@@ -126,7 +131,11 @@ The Postcode schema represents all geographical and administrative information a
 | `codes.pfa`                  | string \| null  | Official 9-character GSS code for this Police Force Area.                                                                                 | "E23000001"                        |
 | `pfa`                        | string \| null  | The police force area for this postcode.                                                                                                  | "Metropolitan Police"              |
 | `date_of_introduction`       | string \| null  | The date the postcode was introduced in YYYYMM format.                                                                                    | "198001"                           |
+| `date_of_termination`        | string \| null  | The date the postcode was terminated in YYYYMM format. `null` for live postcodes.                                                         | null                               |
+| `index_of_multiple_deprivation` | integer \| null | ONS Index of Multiple Deprivation (IMD) rank for this postcode's LSOA. Lower ranks correspond to more deprived areas. England, Wales, Scotland and Northern Ireland use independent IMD scales — values are not directly comparable across countries. | 14843 |
 | `parliamentary_constituency_2024` | string \| null | The UK Parliamentary constituency for this postcode based on July 2024 boundaries.                                                       | "Cities of London and Westminster" |
+| `senedd_constituency`        | string \| null  | The Senedd Cymru (Welsh Parliament) constituency for this postcode. Only applicable to Welsh postcodes; null elsewhere.                   | "Caerdydd Penarth"                 |
+| `senedd_constituency_no`     | integer \| null | The Senedd Cymru (Welsh Parliament) constituency number for this postcode. Only applicable to Welsh postcodes; null elsewhere.            | 14                                 |
 | `nhs_region`                 | string \| null  | The NHS England Region for this postcode. Only applicable to English postcodes.                                                           | "London"                           |
 | `ttwa`                       | string \| null  | The Travel to Work Area for this postcode. TTWAs are areas where most people both live and work.                                          | "London"                           |
 | `national_park`              | string \| null  | The National Park this postcode falls within, if any.                                                                                     | null                               |

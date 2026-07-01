@@ -1,7 +1,7 @@
 import { Handler } from "../types/express";
-import { TerminatedPostcode } from "../models/terminated_postcode";
 import { isValid } from "postcode";
 import { InvalidPostcodeError, TPostcodeNotFoundError } from "../lib/errors";
+import { find, toJson } from "../queries/terminated_postcodes";
 
 export const show: Handler = async (request, response, next) => {
   try {
@@ -9,14 +9,10 @@ export const show: Handler = async (request, response, next) => {
 
     if (!isValid(postcode.trim())) throw new InvalidPostcodeError();
 
-    const result = await TerminatedPostcode.find(postcode);
-
+    const result = await find(postcode);
     if (!result) throw new TPostcodeNotFoundError();
 
-    response.jsonApiResponse = {
-      status: 200,
-      result: TerminatedPostcode.toJson(result),
-    };
+    response.jsonApiResponse = { status: 200, result: toJson(result) };
     next();
   } catch (error) {
     next(error);

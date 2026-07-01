@@ -15,7 +15,7 @@
 import { config as dotenv } from "dotenv";
 dotenv();
 
-import { join } from "path";
+import { join } from "node:path";
 import { defaults } from "./defaults";
 
 const defaultEnv = process.env.NODE_ENV || "development";

@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import { describe, expect, it, afterEach, beforeEach } from "vitest";
 import request from "supertest";
 import { config, postcodesioApplication } from "./helper";
 import promClient from "prom-client";
@@ -9,17 +9,17 @@ describe("Prometheus /metrics endpoint", () => {
   });
 
   describe("when no basic auth configuration is provided", () => {
-    it("should not expose a metrics endpoint if username missing", (done) => {
+    it("should not expose a metrics endpoint if username missing", async () => {
       const cfg = Object.assign({ prometheusPassword: "bar" }, config);
-      assert.isUndefined(cfg.prometheusUsername);
+      expect(cfg.prometheusUsername).toBeUndefined();
       const app = postcodesioApplication(cfg);
-      request(app).get("/metrics").expect(404).end(done);
+      await request(app).get("/metrics").expect(404);
     });
-    it("should not expose a metrics endpoint if password missing", (done) => {
+    it("should not expose a metrics endpoint if password missing", async () => {
       const cfg = Object.assign({ prometheusUsername: "foo" }, config);
-      assert.isUndefined(cfg.prometheusPassword);
+      expect(cfg.prometheusPassword).toBeUndefined();
       const app = postcodesioApplication(cfg);
-      request(app).get("/metrics").expect(404).end(done);
+      await request(app).get("/metrics").expect(404);
     });
   });
 
@@ -41,38 +41,28 @@ describe("Prometheus /metrics endpoint", () => {
           .auth(prometheusUsername, prometheusPassword);
     });
 
-    it("exposes /metrics behind basic auth", (done) => {
-      request(app).get("/metrics").expect(401).end(done);
+    it("exposes /metrics behind basic auth", async () => {
+      await request(app).get("/metrics").expect(401);
     });
 
-    const testMetric = (url: string, expectedMetric: any) => {
-      return new Promise<void>((resolve) => {
-        (async () => {
-          await generateMetric(url);
-          const { text } = await getMetrics();
-          assert.notInclude(text, url);
-          assert.include(text, expectedMetric);
-          return resolve();
-        })();
-      });
+    const testMetric = async (url: string, expectedMetric: any) => {
+      await generateMetric(url);
+      const { text } = await getMetrics();
+      expect(text).not.toContain(url);
+      expect(text).toContain(expectedMetric);
     };
 
     /**
      * Generates metric for URL, swallows any error
      */
-    const generateMetric = (url: string) => {
-      return new Promise((resolve) => {
-        (async () => {
-          try {
-            const response = await request(app).get(url);
-            resolve(response);
-          } catch (error) {
-            // When database is not instantiated,
-            // requesting data will generally return errors like 404
-            resolve(error);
-          }
-        })();
-      });
+    const generateMetric = async (url: string) => {
+      try {
+        return await request(app).get(url);
+      } catch (error) {
+        // When database is not instantiated,
+        // requesting data will generally return errors like 404
+        return error;
+      }
     };
 
     describe("URL normalisation", () => {

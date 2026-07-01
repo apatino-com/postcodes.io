@@ -1,5 +1,5 @@
 import { Handler } from "../types/express";
-import { query } from "../models/base";
+import { query } from "../queries/db";
 import { NotReadyError } from "../lib/errors";
 
 export const ping: Handler = (_, response, next) => {

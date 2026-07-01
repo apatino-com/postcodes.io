@@ -12,8 +12,8 @@ Default configuration values can be found at `config/config.js` and `config/defa
 
 ```bash
 # HTTP
+HOST # Host/interface to bind to (defaults to `0.0.0.0`)
 PORT # Port to listen on
-SERVE_STATIC_ASSETS # Set to `false` to prevent `public/` from being served
 URL_PREFIX # Prefix to append to all routes in this app
 
 # JSON string to set arbitrary headers on all HTTP responses
@@ -41,28 +41,18 @@ PROMETHEUS_USERNAME
 PROMETHEUS_PASSWORD
 
 # Application defaults configuration
-NEAREST_RADIUS_DEFAULT
-NEAREST_RADIUS_MAX
-NEAREST_LIMIT_DEFAULT
-NEAREST_LIMIT_MAX
-SEARCH_LIMIT_DEFAULT
-SEARCH_LIMIT_MAX
-BULKGEOCODE_GEOLOCATIONS_MAX
-BULKGEOCODE_GEOLOCATIONS_ASYNC_LIMIT
-BULKGEOCODE_GEOLOCATIONS_TIMEOUT
-BULKLOOKUPS_POSTCODES_MAX
-BULKLOOKUPS_POSTCODES_ASYNC_LIMIT
-BULKLOOKUPS_POSTCODES_TIMEOUT
-NEARESTOUTCODES_RADIUS_DEFAULT
-NEARESTOUTCODES_RADIUS_MAX
-NEARESTOUTCODES_LIMIT_DEFAULT
-NEARESTOUTCODES_LIMIT_MAX
-PLACESSEARCH_LIMIT_DEFAULT
-PLACESSEARCH_LIMIT_MAX
-PLACESCONTAINED_LIMIT_DEFAULT
-PLACESCONTAINED_LIMIT_MAX
-PLACESNEAREST_LIMIT_DEFAULT
-PLACESNEAREST_LIMIT_MAX
-PLACESNEAREST_RADIUS_DEFAULT
-PLACESNEAREST_RADIUS_MAX
+NEAREST_RADIUS_DEFAULT       # /postcodes?lon=&lat= radius default (metres, default 100)
+NEAREST_RADIUS_MAX           # /postcodes?lon=&lat= radius cap (metres, default 2000)
+NEAREST_LIMIT_DEFAULT        # /postcodes?lon=&lat= result count default (default 10)
+NEAREST_LIMIT_MAX            # /postcodes?lon=&lat= result count cap (default 100)
+SEARCH_LIMIT_DEFAULT         # /postcodes?q= result count default (default 10)
+SEARCH_LIMIT_MAX             # /postcodes?q= result count cap (default 100)
+BULKGEOCODE_GEOLOCATIONS_MAX # POST /postcodes geolocations[] array cap (default 100)
+BULKLOOKUPS_POSTCODES_MAX    # POST /postcodes postcodes[] array cap (default 100)
+NEARESTOUTCODES_RADIUS_DEFAULT # /outcodes?lon=&lat= radius default (metres, default 5000)
+NEARESTOUTCODES_RADIUS_MAX     # /outcodes?lon=&lat= radius cap (metres, default 25000)
+NEARESTOUTCODES_LIMIT_DEFAULT  # /outcodes?lon=&lat= result count default (default 10)
+NEARESTOUTCODES_LIMIT_MAX      # /outcodes?lon=&lat= result count cap (default 100)
+PLACESSEARCH_LIMIT_DEFAULT     # /places?q= result count default (default 10)
+PLACESSEARCH_LIMIT_MAX         # /places?q= result count cap (default 100)
 ```

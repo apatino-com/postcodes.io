@@ -3,7 +3,8 @@ set -euo pipefail
 
 if [[ "$1" == test ]]; then
   dockerize -wait tcp://pg:5432 -timeout 120s
-  npm test
+  pnpm run test:create
+  pnpm test
   exit
 fi
 

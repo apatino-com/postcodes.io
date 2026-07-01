@@ -1,24 +1,26 @@
-import { assert } from "chai";
+import { describe, expect, it } from "vitest";
 import * as helper from "./helper/index";
 const { isEmpty } = helper.string;
 
 describe("isEmpty", () => {
   it("returns true if null", () => {
-    assert.isTrue(isEmpty(null));
+    //@ts-expect-error
+    expect(isEmpty(null)).toBe(true);
   });
   it("returns true if undefined", () => {
-    assert.isTrue(isEmpty(undefined));
+    //@ts-expect-error
+    expect(isEmpty(undefined)).toBe(true);
   });
   it("returns true if spaces", () => {
-    assert.isTrue(isEmpty("   "));
+    expect(isEmpty("   ")).toBe(true);
   });
   it("returns true if empty string", () => {
-    assert.isTrue(isEmpty(""));
+    expect(isEmpty("")).toBe(true);
   });
   it("returns true if space", () => {
-    assert.isTrue(isEmpty(" "));
+    expect(isEmpty(" ")).toBe(true);
   });
   it("returns false if not empty string", () => {
-    assert.isFalse(isEmpty("foo"));
+    expect(isEmpty("foo")).toBe(false);
   });
 });

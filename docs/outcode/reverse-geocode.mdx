@@ -3,9 +3,7 @@ sidebar_label: "Reverse Geocode"
 title: "Reverse Geocode an Outcode"
 ---
 
-This endpoint returns the nearest outcodes for a given longitude and latitude coordinate pair.
-
-Each outcode in the results includes a `distance` field that indicates the distance in meters from the specified coordinates to the outcode.
+This endpoint returns the nearest outcodes for a given longitude and latitude coordinate pair, ordered by proximity. Each result has the same shape as a standard outcode lookup.
 
 ## Endpoint
 
@@ -16,7 +14,7 @@ GET https://api.postcodes.io/outcodes?lon=[longitude]&lat=[latitude]
 ## Example Request
 
 ```http
-https://api.postcodes.io/outcodes?lon=-0.127&lat=51.507
+https://api.postcodes.io/outcodes?lon=-1.6115&lat=54.9724
 ```
 
 ## Example Response
@@ -26,26 +24,32 @@ https://api.postcodes.io/outcodes?lon=-0.127&lat=51.507
   "status": 200,
   "result": [
     {
-      "outcode": "SW1A",
-      "longitude": -0.127325,
-      "latitude": 51.501009,
-      "northings": 179951,
-      "eastings": 529825,
+      "outcode": "NE1",
+      "longitude": -1.6115558171641793,
+      "latitude": 54.97241826305969,
+      "northings": 564268,
+      "eastings": 424965,
       "admin_district": [
-        "Westminster"
+        "Newcastle upon Tyne"
       ],
       "parish": [
-        "Westminster, unparished area"
+        "Newcastle upon Tyne, unparished area"
       ],
-      "admin_county": [],
+      "admin_county": [
+        "(pseudo) England (UA/MD/LB)"
+      ],
       "admin_ward": [
-        "St James's",
-        "Vincent Square"
+        "Arthur's Hill",
+        "Monument",
+        "Ouseburn"
       ],
       "country": [
         "England"
       ],
-      "distance": 672.3056261
+      "parliamentary_constituency": [
+        "Newcastle upon Tyne Central and West",
+        "Newcastle upon Tyne East and Wallsend"
+      ]
     }
     // Truncated for brevity
   ]
