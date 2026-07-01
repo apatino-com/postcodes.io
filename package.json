@@ -86,7 +86,7 @@
     "cors": "~2.8.6",
     "csv": "~6.6.0",
     "csv-parse": "~7.0.0",
-    "docusaurus-plugin-openapi-docs": "~5.0.2",
+    "docusaurus-plugin-openapi-docs": "~5.1.0",
     "docusaurus-theme-openapi-docs": "~5.1.0",
     "dotenv": "~17.4.2",
     "escape-string-regexp": "^5.0.0",
