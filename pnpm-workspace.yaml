@@ -11,3 +11,5 @@ minimumReleaseAge: 0
 overrides:
   "@types/express-serve-static-core": 5.0.6
   webpackbar: ^7.0.0
+
+nodeLinker: hoisted

@@ -33,12 +33,12 @@ stages:
             displayName: 'Install Node.js'
 
           # pnpm via corepack (respects the packageManager pin in package.json).
-          # node-linker=hoisted produces a flat, symlink-free node_modules so the
-          # zip stays deployable to App Service (pnpm's default layout uses
-          # symlinks into a content-addressed store, which does not survive zip
-          # deploy).
+          # nodeLinker: hoisted (set in pnpm-workspace.yaml) produces a flat,
+          # symlink-free node_modules so the zip stays deployable to App Service
+          # (pnpm's default layout uses symlinks into a content-addressed store,
+          # which does not survive zip deploy). NB pnpm 11 ignores node-linker
+          # in .npmrc — it must live in pnpm-workspace.yaml.
           - script: |
-              echo "node-linker=hoisted" > .npmrc
               corepack pnpm install --frozen-lockfile
               corepack pnpm run build
               corepack pnpm prune --prod
