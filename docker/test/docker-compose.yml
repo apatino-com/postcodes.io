@@ -6,8 +6,6 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_HOST: pg
       POSTGRES_USER: postcodesio
-    ports:
-      - 5432:5432
   api:
     build:
       context: ../../
@@ -17,10 +15,9 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postcodesio
       POSTGRES_DATABASE: postcodeio_testing
+      CI: "true"
     depends_on:
       - pg
     volumes:
       - "../../:/app/"
-    ports:
-      - 8000:8000
     command: tail

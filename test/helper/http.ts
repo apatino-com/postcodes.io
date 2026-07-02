@@ -1,17 +1,15 @@
-import { assert } from "chai";
+import { expect } from "vitest";
 
 export const allowsCORS = (response: any): void => {
-  assert.equal(response.headers["access-control-allow-origin"], "*");
+  expect(response.headers["access-control-allow-origin"]).toBe("*");
 };
 
 export const validCorsOptions = (response: any): void => {
   allowsCORS(response);
-  assert.equal(
-    response.headers["access-control-allow-methods"],
+  expect(response.headers["access-control-allow-methods"]).toBe(
     "GET,POST,OPTIONS"
   );
-  assert.equal(
-    response.headers["access-control-allow-headers"],
+  expect(response.headers["access-control-allow-headers"]).toBe(
     "X-Requested-With, Content-Type, Accept, Origin"
   );
 };

@@ -3,6 +3,8 @@ required:
   - postcode
   - year_terminated
   - month_terminated
+  - eastings
+  - northings
   - longitude
   - latitude
 properties:
@@ -28,11 +30,26 @@ properties:
     minimum: 1
     maximum: 12
     enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  eastings:
+    title: Eastings
+    type: integer
+    format: int32
+    nullable: true
+    description: OS National Grid easting (1m resolution). Null for postcodes without a grid reference (e.g. Channel Islands, Isle of Man) or that were terminated before a reference was assigned.
+    example: 530047
+  northings:
+    title: Northings
+    type: integer
+    format: int32
+    nullable: true
+    description: OS National Grid northing (1m resolution). Null for postcodes without a grid reference (e.g. Channel Islands, Isle of Man) or that were terminated before a reference was assigned.
+    example: 179951
   longitude:
     title: Longitude
     type: number
     format: double
-    description: WGS84 longitude coordinate of the postcode location.
+    nullable: true
+    description: WGS84 longitude coordinate of the postcode location. Null if no grid reference is available.
     example: -2.496903
     minimum: -180
     maximum: 180
@@ -40,7 +57,8 @@ properties:
     title: Latitude
     type: number
     format: double
-    description: WGS84 latitude coordinate of the postcode location.
+    nullable: true
+    description: WGS84 latitude coordinate of the postcode location. Null if no grid reference is available.
     example: 53.53513
     minimum: -90
     maximum: 90

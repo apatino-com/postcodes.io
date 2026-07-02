@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import { describe, expect, it } from "vitest";
 import request from "supertest";
 import { postcodesioApplication, configFactory } from "./helper";
 const app = postcodesioApplication();
@@ -31,7 +31,6 @@ describe("Errors", () => {
   });
 });
 
-
 describe("Utils", () => {
   describe("Health", () => {
     it("should return 200 if DB available", async () => {
@@ -39,7 +38,7 @@ describe("Utils", () => {
         .get("/ready")
         .expect(200)
         .expect("Content-Type", /json/);
-      assert.equal(body.result, "Ready");
+      expect(body.result).toBe("Ready");
     });
   });
   describe("Ping", () => {
@@ -48,7 +47,7 @@ describe("Utils", () => {
         .get("/ping")
         .expect(200)
         .expect("Content-Type", /json/);
-      assert.equal(body.result, "pong");
+      expect(body.result).toBe("pong");
     });
   });
 });

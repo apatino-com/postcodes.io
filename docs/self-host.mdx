@@ -3,58 +3,100 @@ sidebar_label: "Self Host"
 title: "Self Host (Docker)"
 ---
 
-Postcodes.io can be installed using two Docker containers: the postcodes.io application container and the postcodes.io database container.
+Postcodes.io can be self-hosted with two Docker images: the API container (`idealpostcodes/postcodes.io`) and a pre-seeded PostgreSQL/PostGIS database container (`idealpostcodes/postcodes.io.db`).
+
+The database image bundles a pre-built `pg_dump` produced by our upstream data pipeline — there is no in-container ingest step. The API container is stateless and connects to whatever Postgres you point it at.
 
 ### Requirements
 
-- Local copy of [postcodes.io repository](https://github.com/ideal-postcodes/postcodes.io)
-- [Docker](https://www.docker.com/)
+- A local clone of [postcodes.io](https://github.com/ideal-postcodes/postcodes.io)
+- [Docker](https://www.docker.com/) (Compose v2 ships with modern Docker installations)
 
 ### Quickstart
 
-If you want to launch the postcodes.io HTTP interface and underlying database quickly, you may do so with `docker-compose`.
-
-Clone the project repository and run docker-compose:
-
 ```bash
-$ docker-compose up -d
+docker-compose up -d
 ```
 
-Running the above command in your terminal will create and network the containers. The HTTP service will be available on port `8000`.
+This brings up the database and API containers and networks them. The HTTP service is exposed on port `8000`.
 
-### Application Container
+### Application container
 
-The Postcodes.io application, which provides the HTTP interface, is packaged as a Docker container identified on the Docker Hub as `idealpostcodes/postcodes.io`.
-
-Example usage:
+`idealpostcodes/postcodes.io` provides the HTTP interface. It is stateless and expects a populated PostgreSQL/PostGIS instance reachable over the network.
 
 ```bash
-$ docker run -d -p 8000 idealpostcodes/postcodes.io
+docker run -d -p 8000:8000 idealpostcodes/postcodes.io
 ```
 
-Configuration available via Environment Variables:
+Configuration is environment-variable-driven.
 
-- `POSTGRES_USER`
-- `POSTGRES_PASSWORD`
-- `POSTGRES_DATABASE`
-- `POSTGRES_HOST`
-- `POSTGRES_PORT`
-- `PORT (HTTP Port to run on)`
+#### HTTP
 
-### Database Container
+| Variable      | Purpose                                                       |
+| ------------- | ------------------------------------------------------------- |
+| `HOST`        | Host/interface to bind to (defaults to `0.0.0.0`).            |
+| `PORT`        | HTTP port the API listens on (defaults to `8000`).            |
+| `URL_PREFIX`  | Prefix prepended to every route (e.g. `/v1`). Empty by default. |
+| `HTTP_HEADERS` | JSON object of headers to attach to every response, e.g. `'{"X-Foo":"bar"}'`. |
 
-`idealpostcodes/postcodes.io.db` points to a [PostgreSQL & PostGIS](https://hub.docker.com/r/mdillon/postgis/) base image and preloads the latest `pg_dump` in the initialization process. The database Docker image is updated with new releases of the ONSPD dataset.
+#### Database
 
-The database Docker image is updated with new releases of the ONSPD dataset. See the [Changelog](https://github.com/ideal-postcodes/postcodes.io/blob/master/CHANGELOG.md) for when a new dataset has been ingested.
+| Variable             | Purpose             |
+| -------------------- | ------------------- |
+| `POSTGRES_USER`      | Database username.  |
+| `POSTGRES_PASSWORD`  | Database password.  |
+| `POSTGRES_DATABASE`  | Database name.      |
+| `POSTGRES_HOST`      | Database host.      |
+| `POSTGRES_PORT`      | Database port.      |
+
+#### Logging & metrics
+
+| Variable               | Purpose                                                                                            |
+| ---------------------- | -------------------------------------------------------------------------------------------------- |
+| `LOG_NAME`             | Name attached to JSON log output.                                                                  |
+| `LOG_DESTINATION`      | `stdout`, `perf` (high-throughput stdout via `pino.extreme`), or a file path.                      |
+| `PROMETHEUS_USERNAME`  | Enables a basic-auth-protected `/metrics` endpoint when both `PROMETHEUS_*` vars are set.          |
+| `PROMETHEUS_PASSWORD`  | Password for the `/metrics` endpoint.                                                              |
+
+#### Request limits
+
+All limit variables are integers. Defaults are tuned for a single-node deployment; raise them only after benchmarking your hardware. The API clamps any incoming `limit` / `radius` query parameter to the `*_MAX` ceiling — it does not reject the request.
+
+| Variable                         | Endpoint                                | Default | Notes                              |
+| -------------------------------- | --------------------------------------- | ------- | ---------------------------------- |
+| `NEAREST_LIMIT_DEFAULT`          | `GET /postcodes?lon=&lat=`              | `10`    | Applied when `limit` is omitted.   |
+| `NEAREST_LIMIT_MAX`              | `GET /postcodes?lon=&lat=`              | `100`   | Hard cap on `limit`.               |
+| `NEAREST_RADIUS_DEFAULT`         | `GET /postcodes?lon=&lat=`              | `100`   | Metres.                            |
+| `NEAREST_RADIUS_MAX`             | `GET /postcodes?lon=&lat=`              | `2000`  | Metres.                            |
+| `SEARCH_LIMIT_DEFAULT`           | `GET /postcodes?q=`                     | `10`    |                                    |
+| `SEARCH_LIMIT_MAX`               | `GET /postcodes?q=`                     | `100`   |                                    |
+| `BULKLOOKUPS_POSTCODES_MAX`      | `POST /postcodes` (`postcodes[]`)       | `100`   | Array length cap.                  |
+| `BULKGEOCODE_GEOLOCATIONS_MAX`   | `POST /postcodes` (`geolocations[]`)    | `100`   | Array length cap.                  |
+| `NEARESTOUTCODES_LIMIT_DEFAULT`  | `GET /outcodes?lon=&lat=`               | `10`    |                                    |
+| `NEARESTOUTCODES_LIMIT_MAX`      | `GET /outcodes?lon=&lat=`               | `100`   |                                    |
+| `NEARESTOUTCODES_RADIUS_DEFAULT` | `GET /outcodes?lon=&lat=`               | `5000`  | Metres.                            |
+| `NEARESTOUTCODES_RADIUS_MAX`     | `GET /outcodes?lon=&lat=`               | `25000` | Metres.                            |
+| `PLACESSEARCH_LIMIT_DEFAULT`     | `GET /places?q=`                        | `10`    |                                    |
+| `PLACESSEARCH_LIMIT_MAX`         | `GET /places?q=`                        | `100`   |                                    |
+
+### Database container
+
+`idealpostcodes/postcodes.io.db` is built on top of the official `postgis/postgis` image and ships a pre-loaded `pg_dump` of the latest ONSPD / OS Open Names / Scottish Postcode Directory data, denormalised into the `public` schema (`public.postcodes`, `public.places`, `public.scottish_postcodes`, `public.outcodes`). The image is rebuilt and re-tagged each time the upstream dump is refreshed; see the [Changelog](https://github.com/ideal-postcodes/postcodes.io/blob/master/CHANGELOG.md) for dataset cadence.
 
 :::info
-Upon starting a container for the first time, PostGIS will be enabled and the `pg_dump` will take 15-60s to restore depending on your system resources.
+On first start the container enables PostGIS and restores the dump. Restoration takes 1-3 minutes depending on hardware. Subsequent starts skip the restore.
 :::
 
-Example Usage:
-
 ```bash
-$ docker run -p 5432 -e POSTGRES_USER=postcodesio -e POSTGRES_DB=postcodesiodb -e POSTGRES_PASSWORD=password idealpostcodes/postcodes.io.db
+docker run -p 5432:5432 \
+  -e POSTGRES_USER=postcodesio \
+  -e POSTGRES_DB=postcodesiodb \
+  -e POSTGRES_PASSWORD=password \
+  idealpostcodes/postcodes.io.db
 ```
 
-As this contains the official PostgreSQL base image, the available configuration environment variables are documented [here](https://hub.docker.com/_/postgres/)
+This image inherits the upstream PostgreSQL configuration surface — see the [postgres image documentation](https://hub.docker.com/_/postgres/) for the full set of environment variables.
+
+### Running the API against your own database
+
+If you already have a Postgres instance loaded with the dump (e.g. by piping the raw `pg_dump` SQL into your own DB), point the API at it via the `POSTGRES_*` variables above. The API is read-only at runtime — no migrations, no support tables to rebuild.

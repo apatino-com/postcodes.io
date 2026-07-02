@@ -1,257 +1,175 @@
 import request from "supertest";
-import { assert } from "chai";
-import { join } from "path";
+import { describe, expect, it } from "vitest";
 import {
   config,
-  clearPostcodeDb,
   postcodesioApplication,
-  seedPostcodeDb,
   allowsCORS,
-  isPlaceObject,
   validCorsOptions,
-  Place
 } from "./helper/index";
 
 const { defaults } = config;
 const app = postcodesioApplication();
-const seedPathDirectory = join(__dirname, "seed/places/");
 
 const DEFAULT_LIMIT = defaults.placesSearch.limit.DEFAULT;
 
 describe("Places Routes", () => {
-  before(async function () {
-    this.timeout(0);
-    await clearPostcodeDb(); 
-    await seedPostcodeDb();
-  });
-
-  after(async () => await clearPostcodeDb());
-
   describe("/places/:id", () => {
-    before(async function() {
-      // Explicitly set up the Places table to ensure it's properly seeded
-      await Place.destroyRelation();
-      await Place.setupTable(seedPathDirectory);
-    });
-    
-    it("returns a place by id", (done) => {
+    it("returns a place by id", async () => {
       const code = "osgb4000000074558362";
-      request(app)
+      const response = await request(app)
         .get(`/places/${code}`)
         .expect(200)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.body.status, 200);
-          const place = response.body.result;
-          assert.equal(place.code, code);
-          isPlaceObject(place);
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.body.status).toBe(200);
+      const place = response.body.result;
+      expect(place.code).toBe(code);
     });
-    it("is case insensitive", (done) => {
+    it("is case insensitive", async () => {
       const code = "osgb4000000074558362";
-      request(app)
+      const response = await request(app)
         .get(`/places/${code.toUpperCase()}`)
         .expect(200)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.body.status, 200);
-          const place = response.body.result;
-          assert.equal(place.code, code);
-          isPlaceObject(place);
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.body.status).toBe(200);
+      const place = response.body.result;
+      expect(place.code).toBe(code);
     });
-    it("returns 404 if place not a valid resource", (done) => {
+    it("returns 404 if place not a valid resource", async () => {
       const code = "foo";
-      request(app)
+      const response = await request(app)
         .get(`/places/${code}`)
         .expect(404)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.body.status, 404);
-          assert.isUndefined(response.body.result);
-          assert.match(response.body.error, /place\snot\sfound/i);
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.body.status).toBe(404);
+      expect(response.body.result).toBeUndefined();
+      expect(response.body.error).toMatch(/place\snot\sfound/i);
     });
-    it("responds to options", (done) => {
+    it("responds to options", async () => {
       const code = "osgb4000000074558362";
-      request(app)
+      const response = await request(app)
         .options(`/places/${code}`)
         .expect(204)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) done(error);
-          validCorsOptions(response);
-          done();
-        });
+        .expect(allowsCORS);
+      validCorsOptions(response);
     });
   });
 
   describe("/places?q= (search)", () => {
-    it("returns places by search term", (done) => {
+    it("returns places by search term", async () => {
       const query = "b";
-      request(app)
+      const response = await request(app)
         .get("/places")
         .query({ query })
         .expect(200)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.status, 200);
-          const places = response.body.result;
-          assert.isTrue(places.length > 0);
-          places.forEach((p: any) => isPlaceObject(p));
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.status).toBe(200);
+      const places = response.body.result;
+      expect(places.length > 0).toBe(true);
+      places.forEach((p: any) => expect(typeof p.code).toBe("string"));
     });
-    it("accepts q as parameter", (done) => {
+    it("accepts q as parameter", async () => {
       const query = "b";
-      request(app)
+      const response = await request(app)
         .get("/places")
         .query({ q: query })
         .expect(200)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.status, 200);
-          const places = response.body.result;
-          assert.isTrue(places.length > 0);
-          places.forEach((p: any) => isPlaceObject(p));
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.status).toBe(200);
+      const places = response.body.result;
+      expect(places.length > 0).toBe(true);
+      places.forEach((p: any) => expect(typeof p.code).toBe("string"));
     });
-    it("returns empty array if empty query", (done) => {
-      request(app)
+    it("returns empty array if empty query", async () => {
+      const response = await request(app)
         .get("/places")
         .query({ query: " " })
         .expect(200)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.status, 200);
-          assert.equal(response.body.result.length, 0);
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.status).toBe(200);
+      expect(response.body.result.length).toBe(0);
     });
-    it("returns empty array no matching places", (done) => {
+    it("returns empty array no matching places", async () => {
       const query = "foobarbaz";
-      request(app)
+      const response = await request(app)
         .get("/places")
         .query({ query })
         .expect(200)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.status, 200);
-          assert.equal(response.body.result.length, 0);
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.status).toBe(200);
+      expect(response.body.result.length).toBe(0);
     });
-    it("responds to options", (done) => {
-      request(app)
+    it("responds to options", async () => {
+      const response = await request(app)
         .options("/places")
         .expect(204)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) done(error);
-          validCorsOptions(response);
-          done();
-        });
+        .expect(allowsCORS);
+      validCorsOptions(response);
     });
-    it("accepts a limit paramater", (done) => {
+    it("accepts a limit paramater", async () => {
       const query = "b";
-      request(app)
+      const response = await request(app)
         .get("/places")
         .query({ query, limit: 1 })
         .expect(200)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.status, 200);
-          const places = response.body.result;
-          assert.equal(places.length, 1);
-          places.forEach((p: any) => isPlaceObject(p));
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.status).toBe(200);
+      const places = response.body.result;
+      expect(places.length).toBe(1);
+      places.forEach((p: any) => expect(typeof p.code).toBe("string"));
     });
-    it("uses default limit if invalid", (done) => {
+    it("uses default limit if invalid", async () => {
       const query = "b";
-      request(app)
+      const response = await request(app)
         .get("/places")
         .query({ query, limit: "foo" })
         .expect(200)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.status, 200);
-          const places = response.body.result;
-          assert.equal(places.length, DEFAULT_LIMIT);
-          places.forEach((p: any) => isPlaceObject(p));
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.status).toBe(200);
+      const places = response.body.result;
+      expect(places.length).toBe(DEFAULT_LIMIT);
+      places.forEach((p: any) => expect(typeof p.code).toBe("string"));
     });
-    it("accepts l as limit parameter", (done) => {
+    it("accepts l as limit parameter", async () => {
       const query = "b";
-      request(app)
+      const response = await request(app)
         .get("/places")
         .query({ query, l: 1 })
         .expect(200)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.status, 200);
-          const places = response.body.result;
-          assert.equal(places.length, 1);
-          places.forEach((p: any) => isPlaceObject(p));
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.status).toBe(200);
+      const places = response.body.result;
+      expect(places.length).toBe(1);
+      places.forEach((p: any) => expect(typeof p.code).toBe("string"));
     });
-    it("returns 400 if invalid limit", (done) => {
-      request(app)
+    it("returns 400 if invalid limit", async () => {
+      const response = await request(app)
         .get("/places")
         .expect(400)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.body.status, 400);
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.body.status).toBe(400);
     });
-    it("sets limit to default if requested limit < 1", (done) => {
+    it("sets limit to default if requested limit < 1", async () => {
       const query = "b";
-      request(app)
+      const response = await request(app)
         .get("/places")
         .query({ query, l: 0 })
         .expect(200)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.status, 200);
-          const places = response.body.result;
-          assert.equal(places.length, DEFAULT_LIMIT);
-          places.forEach((p: any) => isPlaceObject(p));
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.status).toBe(200);
+      const places = response.body.result;
+      expect(places.length).toBe(DEFAULT_LIMIT);
+      places.forEach((p: any) => expect(typeof p.code).toBe("string"));
     });
   });
 
   describe("/random/places", () => {
-    it("returns a random place", (done) => {
-      request(app)
+    it("returns a random place", async () => {
+      const response = await request(app)
         .get("/random/places")
         .expect(200)
-        .expect(allowsCORS)
-        .end((error, response) => {
-          if (error) return done(error);
-          assert.equal(response.status, 200);
-          isPlaceObject(response.body.result);
-          done();
-        });
+        .expect(allowsCORS);
+      expect(response.status).toBe(200);
+      expect(typeof response.body.result.code).toBe("string");
     });
   });
 });

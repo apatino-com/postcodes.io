@@ -18,11 +18,13 @@ interface Log {
   };
 }
 
-let logger = pino();
+const defaultLevel = process.env.NODE_ENV === "test" ? "silent" : "info";
+
+let logger = pino({ level: defaultLevel });
 
 const configure = ({ log }: Log) => {
   const { name, file } = log;
-  logger = pino({ name }, selectTarget(file));
+  logger = pino({ name, level: defaultLevel }, selectTarget(file));
   return logger;
 };
 

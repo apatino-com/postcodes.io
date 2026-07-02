@@ -23,3 +23,8 @@ missing.json
 plan
 .idea/
 .junie/
+bench
+/*.sql.gz
+*.duckdb
+*.duckdb.gz
+.pnpm-store/

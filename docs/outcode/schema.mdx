@@ -12,19 +12,21 @@ The Outcode schema represents geographical and administrative information associ
   "status": 200,
   "result": {
     "outcode": "SW1A",
-    "longitude": -0.13226037062937065,
-    "latitude": 51.504530636363654,
-    "northings": 180053,
-    "eastings": 529727,
+    "longitude": -0.13218813888888895,
+    "latitude": 51.504540465277756,
+    "northings": 180054,
+    "eastings": 529731,
     "admin_district": [
-      "Westminster",
-      "Wandsworth"
+      "Wandsworth",
+      "Westminster"
     ],
     "parish": [
       "Wandsworth, unparished area",
       "Westminster, unparished area"
     ],
-    "admin_county": [],
+    "admin_county": [
+      "(pseudo) England (UA/MD/LB)"
+    ],
     "admin_ward": [
       "Nine Elms",
       "St James's"
@@ -37,7 +39,8 @@ The Outcode schema represents geographical and administrative information associ
       "Cities of London and Westminster"
     ]
   }
-}```
+}
+```
 
 ## Reference
 
@@ -49,11 +52,9 @@ The Outcode schema represents geographical and administrative information associ
 | `longitude`      | number \| null  | WGS84 longitude coordinate (east-west position) averaged from all postcodes in the outcode. May be null if unavailable.                 | -0.132759148                     |
 | `latitude`       | number \| null  | WGS84 latitude coordinate (north-south position) averaged from all postcodes in the outcode. May be null if unavailable.                | 51.50100708                      |
 | `admin_district` | string[]        | List of administrative districts or unitary authorities that contain postcodes within this outcode.                                     | ["Westminster", "Camden"]        |
-| `admin_county`   | string[]        | List of administrative counties that contain postcodes within this outcode. May be empty for areas without county-level administration. | []                               |
+| `admin_county`   | string[]        | List of administrative counties that contain postcodes within this outcode. May be empty for areas without county-level administration. | ["(pseudo) England (UA/MD/LB)"]  |
 | `admin_ward`     | string[]        | List of electoral/administrative wards that contain postcodes within this outcode.                                                      | ["St James's", "West End"]       |
 | `parish`         | string[]        | List of civil parishes (England) or communities (Wales) that contain postcodes within this outcode.                                     | ["Westminster, unparished area"] |
 | `country`        | string[]        | List of UK constituent countries that contain postcodes within this outcode.                                                            | ["England"]                      |
+| `parliamentary_constituency` | string[] | List of UK Parliamentary constituencies (July 2024 boundaries) that contain postcodes within this outcode.                            | ["Cities of London and Westminster", "Battersea"] |
 
-```
-
-```

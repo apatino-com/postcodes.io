@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# Drop and recreate the test database, then load test/seed/seed.sql.gz into it.
+#
+# Uses psql with standard POSTGRES_* env vars (same set as the app). Run from
+# anywhere psql can reach the target host: host shell against dev compose pg
+# (POSTGRES_HOST=127.0.0.1 POSTGRES_PORT=5433) or inside the test container
+# (POSTGRES_HOST=pg, defaults from docker/test/docker-compose.yml).
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SEED="$ROOT/test/seed/seed.sql.gz"
+
+HOST="${POSTGRES_HOST:-127.0.0.1}"
+PORT="${POSTGRES_PORT:-5432}"
+USER="${POSTGRES_USER:-postcodesio}"
+PASSWORD="${POSTGRES_PASSWORD:-password}"
+DB="${POSTGRES_DATABASE:-postcodeio_testing}"
+
+if [[ ! -f "$SEED" ]]; then
+  echo "Seed not found at $SEED. Run bin/generate_test_seed first." >&2
+  exit 1
+fi
+
+export PGPASSWORD="$PASSWORD"
+PSQL=(psql -h "$HOST" -p "$PORT" -U "$USER" --quiet)
+
+"${PSQL[@]}" -d postgres -c "DROP DATABASE IF EXISTS $DB;" >/dev/null
+"${PSQL[@]}" -d postgres -c "CREATE DATABASE $DB OWNER $USER;" >/dev/null
+
+gunzip -c "$SEED" | "${PSQL[@]}" -d "$DB" -v ON_ERROR_STOP=1
+
+echo "loaded $(du -h "$SEED" | cut -f1) into $DB on $HOST:$PORT"

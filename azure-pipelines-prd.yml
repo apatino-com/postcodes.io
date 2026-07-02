@@ -32,11 +32,17 @@ stages:
               version: '24.x'
             displayName: 'Install Node.js'
 
+          # pnpm via corepack (respects the packageManager pin in package.json).
+          # node-linker=hoisted produces a flat, symlink-free node_modules so the
+          # zip stays deployable to App Service (pnpm's default layout uses
+          # symlinks into a content-addressed store, which does not survive zip
+          # deploy).
           - script: |
-              npm install
-              npm run build
-              npm prune --production
-            displayName: 'npm install, build and prune'
+              echo "node-linker=hoisted" > .npmrc
+              corepack pnpm install --frozen-lockfile
+              corepack pnpm run build
+              corepack pnpm prune --prod
+            displayName: 'pnpm install, build and prune'
 
           - task: CopyFiles@2
             displayName: 'Copy files to staging'
@@ -44,12 +50,9 @@ stages:
               SourceFolder: '$(System.DefaultWorkingDirectory)'
               Contents: |
                 dist/**
-                bin/**
-                data/**
                 node_modules/**
                 package.json
-                package-lock.json
-                build/**
+                pnpm-lock.yaml
                 .deployment
               TargetFolder: '$(Build.ArtifactStagingDirectory)/package'
 

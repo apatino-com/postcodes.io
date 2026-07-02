@@ -1,0 +1,13 @@
+allowBuilds:
+  '@parcel/watcher': true
+  core-js: false
+  core-js-pure: false
+  esbuild: true
+  postman-code-generators: false
+  protobufjs: true
+
+minimumReleaseAge: 0
+
+overrides:
+  "@types/express-serve-static-core": 5.0.6
+  webpackbar: ^7.0.0

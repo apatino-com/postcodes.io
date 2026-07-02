@@ -65,16 +65,11 @@ export class InvalidPostcodeError extends PostcodesioHttpError {
 }
 
 interface TerminatedPostcodeTuple {
-  id: number;
   postcode: string;
-  pc_compact: string;
   year_terminated: number;
   month_terminated: number;
-  eastings: number;
-  northings: number;
-  longitude: number;
-  latitude: number;
-  location: string;
+  longitude: number | null;
+  latitude: number | null;
 }
 
 export class PostcodeNotFoundError extends PostcodesioHttpError {

@@ -10,10 +10,12 @@ The Terminated Postcode schema provides information about UK postcodes that are 
 ```json
 {
   "postcode": "AB1 0AA",
-  "year_terminated": 2018,
+  "year_terminated": 1996,
   "month_terminated": 6,
-  "longitude": -2.242851,
-  "latitude": 57.101474
+  "eastings": 385386,
+  "northings": 801193,
+  "longitude": -2.242858,
+  "latitude": 57.101459
 }
 ```
 
@@ -22,7 +24,9 @@ The Terminated Postcode schema provides information about UK postcodes that are 
 | Field              | Type    | Description                                                                                                                                                                                         | Example   |
 | ------------------ | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
 | `postcode`         | string  | UK postcode format: 2-4 character outward code, a space, and a 3-character inward code. All terminated postcodes within the UK, Channel Islands and Isle of Man, updated quarterly from Royal Mail. | "AB1 0AA" |
-| `year_terminated`  | integer | The year in which the postcode was terminated.                                                                                                                                                      | 2018      |
+| `year_terminated`  | integer | The year in which the postcode was terminated.                                                                                                                                                      | 1996      |
 | `month_terminated` | integer | The month in which the postcode was terminated (1-12 format, where 1 is January and 12 is December).                                                                                                | 6         |
-| `longitude`        | number  | WGS84 longitude coordinate (east-west position) based on the postcode's national grid reference.                                                                                                    | -2.242851 |
-| `latitude`         | number  | WGS84 latitude coordinate (north-south position) based on the postcode's national grid reference.                                                                                                   | 57.101474 |
+| `eastings`         | integer | OS National Grid easting (1m resolution). Null for postcodes without a grid reference (e.g. Channel Islands, Isle of Man) or that were terminated before a reference was assigned.                  | 385386    |
+| `northings`        | integer | OS National Grid northing (1m resolution). Null for postcodes without a grid reference (e.g. Channel Islands, Isle of Man) or that were terminated before a reference was assigned.                 | 801193    |
+| `longitude`        | number  | WGS84 longitude coordinate (east-west position) based on the postcode's national grid reference.                                                                                                    | -2.242858 |
+| `latitude`         | number  | WGS84 latitude coordinate (north-south position) based on the postcode's national grid reference.                                                                                                   | 57.101459 |

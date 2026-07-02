@@ -10,7 +10,5 @@ properties:
     enum:
       - 200
   result:
-    type: array
-    items:
-      $ref: "../schemas/TerminatedPostcode.yaml"
-    description: "Data for a given postcode"
+    $ref: "../schemas/TerminatedPostcode.yaml"
+    description: "Data for the requested terminated postcode."

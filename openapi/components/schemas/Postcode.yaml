@@ -22,6 +22,28 @@ required:
   - msoa
   - ced
   - ccg
+  - pfa
+  - date_of_introduction
+  - date_of_termination
+  - index_of_multiple_deprivation
+  - parliamentary_constituency_2024
+  - senedd_constituency
+  - senedd_constituency_no
+  - nhs_region
+  - ttwa
+  - national_park
+  - bua
+  - icb
+  - cancer_alliance
+  - lsoa11
+  - msoa11
+  - lsoa21
+  - msoa21
+  - oa21
+  - ruc11
+  - ruc21
+  - lep1
+  - lep2
   - nuts
   - codes
 properties:
@@ -84,8 +106,8 @@ properties:
     title: County
     type: string
     nullable: true
-    description: "The administrative county for this postcode. May be empty for areas without county-level administration."
-    example: ""
+    description: "The administrative county for this postcode. Null where the postcode falls outside a county-level authority (the underlying GSS code is then a pseudo such as `E99999999`, surfaced under `codes.admin_county`)."
+    example: null
   admin_district:
     title: District
     type: string
@@ -178,12 +200,38 @@ properties:
     nullable: true
     description: "The date the postcode was introduced in YYYYMM format."
     example: "198001"
+  date_of_termination:
+    title: Date of Termination
+    type: string
+    nullable: true
+    description: "The date the postcode was terminated in YYYYMM format. Null for live postcodes."
+    example: null
+  index_of_multiple_deprivation:
+    title: Index of Multiple Deprivation
+    type: integer
+    format: int32
+    nullable: true
+    description: "ONS Index of Multiple Deprivation (IMD) rank for this postcode's LSOA. Lower ranks correspond to more deprived areas. England, Wales, Scotland and Northern Ireland use independent IMD scales — values are not directly comparable across countries."
+    example: 14843
   parliamentary_constituency_2024:
     title: Westminster Parliamentary Constituency (2024)
     type: string
     nullable: true
     description: "The UK Parliamentary constituency for this postcode based on July 2024 boundaries."
     example: "Cities of London and Westminster"
+  senedd_constituency:
+    title: Senedd Cymru Constituency
+    type: string
+    nullable: true
+    description: "The Senedd Cymru (Welsh Parliament) constituency for this postcode. Only applicable to Welsh postcodes; null elsewhere."
+    example: "Caerdydd Penarth"
+  senedd_constituency_no:
+    title: Senedd Cymru Constituency Number
+    type: integer
+    format: int32
+    nullable: true
+    description: "The Senedd Cymru (Welsh Parliament) constituency number for this postcode. Only applicable to Welsh postcodes; null elsewhere."
+    example: 14
   nhs_region:
     title: NHS England Region
     type: string
@@ -288,6 +336,36 @@ properties:
     title: Administrative Codes
     type: object
     description: "Contains the GSS (Government Statistical Service) codes for administrative areas. Note: Returns 'Pseudo codes' (e.g., L99999999 for Channel Islands, M99999999 for Isle of Man, N99999999 for Northern Ireland, S99999999 for Scotland) for areas where a statutory geography does not exist. Client logic should handle these codes as 'Not Applicable' rather than treating them as valid IDs."
+    required:
+      - admin_district
+      - admin_county
+      - admin_ward
+      - parish
+      - ccg
+      - ccg_id
+      - ced
+      - nuts
+      - lau2
+      - lsoa
+      - msoa
+      - pfa
+      - parliamentary_constituency
+      - parliamentary_constituency_2024
+      - nhs_region
+      - ttwa
+      - national_park
+      - bua
+      - icb
+      - cancer_alliance
+      - lsoa11
+      - msoa11
+      - lsoa21
+      - msoa21
+      - oa21
+      - ruc11
+      - ruc21
+      - lep1
+      - lep2
     properties:
       admin_district:
         title: "District GSS Code"
@@ -361,6 +439,12 @@ properties:
         nullable: true
         description: "Official 9-character GSS code for this Police Force Area."
         example: "E23000001"
+      parliamentary_constituency:
+        title: "Parliamentary Constituency GSS Code"
+        type: string
+        nullable: true
+        description: "Official 9-character GSS code for this Parliamentary Constituency (July 2024 boundaries). Alias for codes.parliamentary_constituency_2024."
+        example: "E14000639"
       parliamentary_constituency_2024:
         title: "Parliamentary Constituency GSS Code (2024)"
         type: string

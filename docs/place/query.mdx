@@ -3,9 +3,9 @@ sidebar_label: "Query"
 title: "Query for a Place"
 ---
 
-Search for places that match a given query string. This endpoint returns a list of matching places with their associated data.
+Search for places that match a given query string. This endpoint returns a list of matching places with their associated data, sourced from Ordnance Survey's Open Names dataset.
 
-The search performs prefix matching and returns results in sorted order (case insensitive).
+The search performs full-text matching against the place's primary and secondary names (case insensitive), falling back to prefix matching when there is no full-text hit.
 
 Returns a 200 response with either an empty array or up to 100 matching place entities.
 
@@ -28,67 +28,73 @@ https://api.postcodes.io/places?q=London&limit=3
   "status": 200,
   "result": [
     {
-      "place_name": "London",
-      "country": "England",
+      "code": "osgb4000000074564391",
+      "name_1": "London",
+      "name_1_lang": null,
+      "name_2": null,
+      "name_2_lang": null,
+      "local_type": "Capital City",
+      "outcode": "SW1A",
+      "county_unitary": "Greater London",
+      "county_unitary_type": "GB/GLA",
+      "district_borough": "Westminster",
+      "district_borough_type": "GB/LBO",
       "region": "London",
-      "longitude": -0.1245,
-      "latitude": 51.508,
-      "eastings": 530856,
-      "northings": 180392,
-      "admin_district": "Westminster",
-      "admin_county": null,
-      "admin_ward": "St James's",
-      "parish": "Westminster, unparished area",
-      "type": "City",
-      "population": 8961989,
-      "codes": {
-        "admin_district": "E09000033",
-        "admin_county": "E99999999",
-        "admin_ward": "E05013806",
-        "parish": "E43000236"
-      }
+      "country": "England",
+      "longitude": -0.124669,
+      "latitude": 51.50092,
+      "eastings": 530005,
+      "northings": 179998,
+      "min_eastings": 529097,
+      "min_northings": 179257,
+      "max_eastings": 530826,
+      "max_northings": 180890
     },
     {
-      "place_name": "London Colney",
-      "country": "England",
+      "code": "osgb4000000074552240",
+      "name_1": "London Colney",
+      "name_1_lang": null,
+      "name_2": null,
+      "name_2_lang": null,
+      "local_type": "Village",
+      "outcode": "AL2",
+      "county_unitary": "Hertfordshire",
+      "county_unitary_type": "GB/COU",
+      "district_borough": "St Albans",
+      "district_borough_type": "GB/DIS",
       "region": "East of England",
-      "longitude": -0.2956,
-      "latitude": 51.724,
+      "country": "England",
+      "longitude": -0.295621,
+      "latitude": 51.724052,
       "eastings": 519047,
       "northings": 204037,
-      "admin_district": "St Albans",
-      "admin_county": "Hertfordshire",
-      "admin_ward": "London Colney",
-      "parish": "London Colney",
-      "type": "Village",
-      "population": 10192,
-      "codes": {
-        "admin_district": "E07000240",
-        "admin_county": "E10000015",
-        "admin_ward": "E05004782",
-        "parish": "E04012147"
-      }
+      "min_eastings": 518233,
+      "min_northings": 203145,
+      "max_eastings": 519846,
+      "max_northings": 204923
     },
     {
-      "place_name": "Londonthorpe",
-      "country": "England",
+      "code": "osgb4000000074553923",
+      "name_1": "Londonthorpe",
+      "name_1_lang": null,
+      "name_2": null,
+      "name_2_lang": null,
+      "local_type": "Hamlet",
+      "outcode": "NG31",
+      "county_unitary": "Lincolnshire",
+      "county_unitary_type": "GB/COU",
+      "district_borough": "South Kesteven",
+      "district_borough_type": "GB/DIS",
       "region": "East Midlands",
-      "longitude": -0.5726,
-      "latitude": 52.9464,
+      "country": "England",
+      "longitude": -0.572613,
+      "latitude": 52.946381,
       "eastings": 495078,
       "northings": 338752,
-      "admin_district": "South Kesteven",
-      "admin_county": "Lincolnshire",
-      "admin_ward": "Belmont",
-      "parish": "Londonthorpe and Harrowby Without",
-      "type": "Hamlet",
-      "population": 257,
-      "codes": {
-        "admin_district": "E07000141",
-        "admin_county": "E10000019",
-        "admin_ward": "E05005527",
-        "parish": "E04005618"
-      }
+      "min_eastings": 494816,
+      "min_northings": 338544,
+      "max_eastings": 495326,
+      "max_northings": 338943
     }
   ]
 }

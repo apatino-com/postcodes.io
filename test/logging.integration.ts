@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import { describe, expect, it } from "vitest";
 import { postcodesioApplication, configFactory } from "./helper";
 import pino from "pino";
 
@@ -13,8 +13,8 @@ describe("Log configuration", () => {
     // @ts-ignore
     const { pcioLogger } = postcodesioApplication(config);
     const output = pcioLogger[stream];
-    assert.isNotNull(output.fd);
-    assert.equal(output.fd, 1);
+    expect(output.fd).not.toBeNull();
+    expect(output.fd).toBe(1);
   });
 
   it("writes to file if destination set to file", () => {
@@ -25,7 +25,7 @@ describe("Log configuration", () => {
     const output = pcioLogger[stream];
     // In newer Pino versions, the file property might not be directly available
     // Instead, check that we're not writing to stdout (fd !== 1)
-    assert.notEqual(output.fd, 1);
+    expect(output.fd).not.toBe(1);
   });
 
   it("writes to stdout if log destination set to `stdout`", () => {
@@ -34,11 +34,11 @@ describe("Log configuration", () => {
     // @ts-ignore
     const { pcioLogger } = postcodesioApplication(config);
     const output = pcioLogger[stream];
-    assert.isNotNull(output.fd);
-    assert.equal(output.fd, 1);
+    expect(output.fd).not.toBeNull();
+    expect(output.fd).toBe(1);
     // In newer Pino versions, sync may have different default values
     // We're explicitly setting it to true in our logger.ts
-    assert.equal(output.sync, true);
+    expect(output.sync).toBe(true);
   });
 
   // https://github.com/pinojs/pino/blob/master/docs/extreme.md
@@ -48,7 +48,7 @@ describe("Log configuration", () => {
     // @ts-ignore
     const { pcioLogger } = postcodesioApplication(config);
     const output = pcioLogger[stream];
-    assert.equal(output.fd, 1);
-    assert.isFalse(output.sync);
+    expect(output.fd).toBe(1);
+    expect(output.sync).toBe(false);
   });
 });

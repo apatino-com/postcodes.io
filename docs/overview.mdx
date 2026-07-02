@@ -44,10 +44,14 @@ GET https://api.postcodes.io/postcodes/BR87RE
     "outcode": "BR8",
     "parliamentary_constituency": "Sevenoaks",
     "parliamentary_constituency_2024": "Sevenoaks",
+    "senedd_constituency": null,
+    "senedd_constituency_no": null,
     "admin_district": "Sevenoaks",
     "parish": "Hextable",
     "admin_county": "Kent",
     "date_of_introduction": "198001",
+    "date_of_termination": null,
+    "index_of_multiple_deprivation": 22386,
     "admin_ward": "Hextable",
     "ced": "Swanley",
     "ccg": "NHS Kent and Medway",
@@ -105,15 +109,17 @@ GET https://api.postcodes.io/postcodes/BR87RE
 
 ## Data
 
-| Dataset                     | Release Date  |
-| --------------------------- | ------------- |
-| ONS Postcode Directory      | September 2025 |
-| OS Open Names               | August 2025  |
-| Scottish Postcode Directory | January 2025  |
+Postcodes.io serves three upstream datasets:
+
+- **ONS Postcode Directory (ONSPD)** — UK postcodes with administrative, electoral, statistical and health geographies. Updated quarterly (February, May, August, November).
+- **OS Open Names** — places, settlements and other gazetteer entries for Great Britain. Updated quarterly.
+- **Scottish Postcode Directory (SPD)** — postcodes with Scottish-specific geographies (council areas, Scottish Parliamentary constituencies, Data Zones, SIMD, etc.). Updated twice a year.
+
+For the exact release date of each dataset currently loaded into the public API and Docker images, see the [CHANGELOG](https://github.com/ideal-postcodes/postcodes.io/blob/master/CHANGELOG.md) on GitHub.
 
 :::note
 
-Beyond the dates listed above, please be aware that the real-world dataset may change. Existing postcodes and places may be amended or discontinued. This information will not be captured until the next available update.
+Beyond the dates listed in the changelog, please be aware that the real-world dataset may change. Existing postcodes and places may be amended or discontinued. This information will not be captured until the next available update.
 :::
 
 ## Data Accuracy & Limitations
@@ -151,12 +157,6 @@ https://api.postcodes.io
 ```
 
 The API accepts GET and POST requests. POST methods use content type `application/json`.
-
-## Data Extraction
-
-The Postcodes.io application and database are packaged as Docker images for rapid local deployment and data extraction.
-
-To perform one-time data extraction tasks using SQL, see our [local data extraction guide](https://ideal-postcodes.co.uk/guides/postcodes-io-database).
 
 ## Error Handling
 
