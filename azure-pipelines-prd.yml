@@ -42,6 +42,10 @@ stages:
               corepack pnpm install --frozen-lockfile
               corepack pnpm run build
               corepack pnpm prune --prod
+              # prune removes dev deps but leaves their node_modules/.bin
+              # symlinks dangling; CopyFiles@2 errors on broken links. The .bin
+              # entries are not needed at runtime (start = node dist/server.js).
+              find node_modules -xtype l -delete
             displayName: 'pnpm install, build and prune'
 
           - task: CopyFiles@2
