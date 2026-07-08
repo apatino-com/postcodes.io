@@ -173,8 +173,8 @@ importers:
         specifier: ~10.1.0
         version: 10.1.0(@types/react@19.1.17)(react@19.2.6)
       react-redux:
-        specifier: ~9.2.0
-        version: 9.2.0(@types/react@19.1.17)(react@19.2.6)(redux@4.2.1)
+        specifier: ~9.3.0
+        version: 9.3.0(@types/react@19.1.17)(react@19.2.6)(redux@4.2.1)
       semantic-release:
         specifier: ~25.0.3
         version: 25.0.3(typescript@5.8.3)
@@ -5951,6 +5951,10 @@ packages:
     resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
     engines: {node: '>=12'}
 
+  picomatch@4.0.5:
+    resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
+    engines: {node: '>=12'}
+
   pify@3.0.0:
     resolution: {integrity: sha512-C3FsVNH1udSEX48gGX1xfvwTWfsYWj5U+8/uK15BGzIGrKoUpghX8hWZwa/OFnakBiiVNmBvemTJR5mcy7iPcg==}
     engines: {node: '>=4'}
@@ -6621,8 +6625,8 @@ packages:
       react-native:
         optional: true
 
-  react-redux@9.2.0:
-    resolution: {integrity: sha512-ROY9fvHhwOD9ySfrF0wmvu//bKCQ6AeZZq1nJNtbDC+kk5DuSuNX/n6YWYF/SYy7bSba4D4FSz8DJeKY/S/r+g==}
+  react-redux@9.3.0:
+    resolution: {integrity: sha512-KQopgqFo/p/fgmAs5qz6p5RWaNAzq40WAu7fJIXnQpYxFPbJYtsJPWvGeF2rOBaY/kEuV77AVsX8TsQzKm+A/g==}
     peerDependencies:
       '@types/react': ^18.2.25 || ^19
       react: ^18.0 || ^19
@@ -13169,6 +13173,10 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.5
 
+  fdir@6.5.0(picomatch@4.0.5):
+    optionalDependencies:
+      picomatch: 4.0.5
+
   feed@4.2.2:
     dependencies:
       xml-js: 1.6.11
@@ -15623,6 +15631,8 @@ snapshots:
 
   picomatch@4.0.5: {}
 
+  picomatch@4.0.5: {}
+
   pify@3.0.0: {}
 
   pino-abstract-transport@3.0.0:
@@ -16391,7 +16401,7 @@ snapshots:
     optionalDependencies:
       react-dom: 19.2.6(react@19.2.6)
 
-  react-redux@9.2.0(@types/react@19.1.17)(react@19.2.6)(redux@4.2.1):
+  react-redux@9.3.0(@types/react@19.1.17)(react@19.2.6)(redux@4.2.1):
     dependencies:
       '@types/use-sync-external-store': 0.0.6
       react: 19.2.6
