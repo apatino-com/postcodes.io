@@ -1,7 +1,12 @@
 import { qToString } from "../lib/string";
 import { PlaceNotFoundError, InvalidQueryError } from "../lib/errors";
 import { Handler, Response, Next } from "../types/express";
-import { findByCode, random as randomPlace, search, toJson } from "../queries/places";
+import {
+  findByCode,
+  random as randomPlace,
+  search,
+  toJson,
+} from "../queries/places";
 
 export const show: Handler = async (request, response, next) => {
   try {
@@ -39,7 +44,10 @@ export const query: Handler = async (request, response, next) => {
     const name = qToString(request.query.query || request.query.q) || "";
     if (name.trim().length === 0) return returnEmptyResponse(response, next);
 
-    const rawLimit = parseInt(qToString(request.query.limit || request.query.l), 10);
+    const rawLimit = parseInt(
+      qToString(request.query.limit || request.query.l) ?? "",
+      10
+    );
     const limit = isNaN(rawLimit) ? undefined : rawLimit;
 
     const places = await search({ name, limit });
