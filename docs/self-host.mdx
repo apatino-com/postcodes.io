@@ -32,52 +32,53 @@ Configuration is environment-variable-driven.
 
 #### HTTP
 
-| Variable      | Purpose                                                       |
-| ------------- | ------------------------------------------------------------- |
-| `HOST`        | Host/interface to bind to (defaults to `0.0.0.0`).            |
-| `PORT`        | HTTP port the API listens on (defaults to `8000`).            |
-| `URL_PREFIX`  | Prefix prepended to every route (e.g. `/v1`). Empty by default. |
-| `HTTP_HEADERS` | JSON object of headers to attach to every response, e.g. `'{"X-Foo":"bar"}'`. |
+| Variable               | Purpose                                                                                                                                                                                                                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `HOST`                 | Host/interface to bind to (defaults to `0.0.0.0`).                                                                                                                                                                                                                                         |
+| `PORT`                 | HTTP port the API listens on (defaults to `8000`).                                                                                                                                                                                                                                         |
+| `URL_PREFIX`           | Prefix prepended to every route (e.g. `/v1`). Empty by default.                                                                                                                                                                                                                            |
+| `HTTP_HEADERS`         | JSON object of headers to attach to every response, e.g. `'{"X-Foo":"bar"}'`. Applied after the built-in [Helmet](https://helmetjs.github.io/) security headers, so it can override them.                                                                                                  |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated list of origins allowed by CORS, e.g. `https://foo.example.com,https://bar.example.com`. Unset by default: the API is deliberately public and unauthenticated, so any origin (`*`) may call it. Set this only if your deployment should serve known consumers exclusively. |
 
 #### Database
 
-| Variable             | Purpose             |
-| -------------------- | ------------------- |
-| `POSTGRES_USER`      | Database username.  |
-| `POSTGRES_PASSWORD`  | Database password.  |
-| `POSTGRES_DATABASE`  | Database name.      |
-| `POSTGRES_HOST`      | Database host.      |
-| `POSTGRES_PORT`      | Database port.      |
+| Variable            | Purpose            |
+| ------------------- | ------------------ |
+| `POSTGRES_USER`     | Database username. |
+| `POSTGRES_PASSWORD` | Database password. |
+| `POSTGRES_DATABASE` | Database name.     |
+| `POSTGRES_HOST`     | Database host.     |
+| `POSTGRES_PORT`     | Database port.     |
 
 #### Logging & metrics
 
-| Variable               | Purpose                                                                                            |
-| ---------------------- | -------------------------------------------------------------------------------------------------- |
-| `LOG_NAME`             | Name attached to JSON log output.                                                                  |
-| `LOG_DESTINATION`      | `stdout`, `perf` (high-throughput stdout via `pino.extreme`), or a file path.                      |
-| `PROMETHEUS_USERNAME`  | Enables a basic-auth-protected `/metrics` endpoint when both `PROMETHEUS_*` vars are set.          |
-| `PROMETHEUS_PASSWORD`  | Password for the `/metrics` endpoint.                                                              |
+| Variable              | Purpose                                                                                   |
+| --------------------- | ----------------------------------------------------------------------------------------- |
+| `LOG_NAME`            | Name attached to JSON log output.                                                         |
+| `LOG_DESTINATION`     | `stdout`, `perf` (high-throughput stdout via `pino.extreme`), or a file path.             |
+| `PROMETHEUS_USERNAME` | Enables a basic-auth-protected `/metrics` endpoint when both `PROMETHEUS_*` vars are set. |
+| `PROMETHEUS_PASSWORD` | Password for the `/metrics` endpoint.                                                     |
 
 #### Request limits
 
 All limit variables are integers. Defaults are tuned for a single-node deployment; raise them only after benchmarking your hardware. The API clamps any incoming `limit` / `radius` query parameter to the `*_MAX` ceiling — it does not reject the request.
 
-| Variable                         | Endpoint                                | Default | Notes                              |
-| -------------------------------- | --------------------------------------- | ------- | ---------------------------------- |
-| `NEAREST_LIMIT_DEFAULT`          | `GET /postcodes?lon=&lat=`              | `10`    | Applied when `limit` is omitted.   |
-| `NEAREST_LIMIT_MAX`              | `GET /postcodes?lon=&lat=`              | `100`   | Hard cap on `limit`.               |
-| `NEAREST_RADIUS_DEFAULT`         | `GET /postcodes?lon=&lat=`              | `100`   | Metres.                            |
-| `NEAREST_RADIUS_MAX`             | `GET /postcodes?lon=&lat=`              | `2000`  | Metres.                            |
-| `SEARCH_LIMIT_DEFAULT`           | `GET /postcodes?q=`                     | `10`    |                                    |
-| `SEARCH_LIMIT_MAX`               | `GET /postcodes?q=`                     | `100`   |                                    |
-| `BULKLOOKUPS_POSTCODES_MAX`      | `POST /postcodes` (`postcodes[]`)       | `100`   | Array length cap.                  |
-| `BULKGEOCODE_GEOLOCATIONS_MAX`   | `POST /postcodes` (`geolocations[]`)    | `100`   | Array length cap.                  |
-| `NEARESTOUTCODES_LIMIT_DEFAULT`  | `GET /outcodes?lon=&lat=`               | `10`    |                                    |
-| `NEARESTOUTCODES_LIMIT_MAX`      | `GET /outcodes?lon=&lat=`               | `100`   |                                    |
-| `NEARESTOUTCODES_RADIUS_DEFAULT` | `GET /outcodes?lon=&lat=`               | `5000`  | Metres.                            |
-| `NEARESTOUTCODES_RADIUS_MAX`     | `GET /outcodes?lon=&lat=`               | `25000` | Metres.                            |
-| `PLACESSEARCH_LIMIT_DEFAULT`     | `GET /places?q=`                        | `10`    |                                    |
-| `PLACESSEARCH_LIMIT_MAX`         | `GET /places?q=`                        | `100`   |                                    |
+| Variable                         | Endpoint                             | Default | Notes                            |
+| -------------------------------- | ------------------------------------ | ------- | -------------------------------- |
+| `NEAREST_LIMIT_DEFAULT`          | `GET /postcodes?lon=&lat=`           | `10`    | Applied when `limit` is omitted. |
+| `NEAREST_LIMIT_MAX`              | `GET /postcodes?lon=&lat=`           | `100`   | Hard cap on `limit`.             |
+| `NEAREST_RADIUS_DEFAULT`         | `GET /postcodes?lon=&lat=`           | `100`   | Metres.                          |
+| `NEAREST_RADIUS_MAX`             | `GET /postcodes?lon=&lat=`           | `2000`  | Metres.                          |
+| `SEARCH_LIMIT_DEFAULT`           | `GET /postcodes?q=`                  | `10`    |                                  |
+| `SEARCH_LIMIT_MAX`               | `GET /postcodes?q=`                  | `100`   |                                  |
+| `BULKLOOKUPS_POSTCODES_MAX`      | `POST /postcodes` (`postcodes[]`)    | `100`   | Array length cap.                |
+| `BULKGEOCODE_GEOLOCATIONS_MAX`   | `POST /postcodes` (`geolocations[]`) | `100`   | Array length cap.                |
+| `NEARESTOUTCODES_LIMIT_DEFAULT`  | `GET /outcodes?lon=&lat=`            | `10`    |                                  |
+| `NEARESTOUTCODES_LIMIT_MAX`      | `GET /outcodes?lon=&lat=`            | `100`   |                                  |
+| `NEARESTOUTCODES_RADIUS_DEFAULT` | `GET /outcodes?lon=&lat=`            | `5000`  | Metres.                          |
+| `NEARESTOUTCODES_RADIUS_MAX`     | `GET /outcodes?lon=&lat=`            | `25000` | Metres.                          |
+| `PLACESSEARCH_LIMIT_DEFAULT`     | `GET /places?q=`                     | `10`    |                                  |
+| `PLACESSEARCH_LIMIT_MAX`         | `GET /places?q=`                     | `100`   |                                  |
 
 ### Database container
 
