@@ -146,8 +146,8 @@ importers:
         specifier: ~5.1.2
         version: 5.1.3(@docusaurus/plugin-content-docs@3.10.2(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(postcss@8.5.16)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)(typescript@7.0.2))(@docusaurus/utils-validation@3.10.2(postcss@8.5.16)(react-dom@19.2.7(react@19.2.8))(react@19.2.8))(@docusaurus/utils@3.10.2(postcss@8.5.16)(react-dom@19.2.7(react@19.2.8))(react@19.2.8))(@types/json-schema@7.0.15)(react@19.2.8)
       docusaurus-theme-openapi-docs:
-        specifier: ~5.1.0
-        version: 5.1.0(81eefbf8546963c4b3b26cdb6337ab0d)
+        specifier: ~5.1.3
+        version: 5.1.3(81eefbf8546963c4b3b26cdb6337ab0d)
       openapi-types:
         specifier: ~12.1.3
         version: 12.1.3
@@ -4271,8 +4271,8 @@ packages:
       '@docusaurus/core': ^2.0.0-beta || ^3.0.0-alpha
       sass: ^1.30.0
 
-  docusaurus-theme-openapi-docs@5.1.0:
-    resolution: {integrity: sha512-SLHg1lodIM5AEGo0EJx4pJ+9szDDrN8Q+hNk5qqTVJ60k/zKjHAnwGCzVDT25K1CCMDPaUzuuruj43d7TRoQKw==}
+  docusaurus-theme-openapi-docs@5.1.3:
+    resolution: {integrity: sha512-npbD1QahtjAEmrOet/86i5fTmcJX4/rPhVT+c0qKjm7StUNbyqjwchSVBQuU1rB69T51JOA9TpT/y6QcB9Xjvw==}
     engines: {node: '>=14'}
     peerDependencies:
       '@docusaurus/theme-common': ^3.10.0
@@ -6447,8 +6447,8 @@ packages:
     resolution: {integrity: sha512-cbH9IAIJHNj9uXi196JVsRlt7cHKak6u/e6AkL/bkRelZ7rlL3X1YKxsZwa36xipOEKAsdtmaG6aAJoM1fx2zA==}
     engines: {node: '>=14.16'}
 
-  pako@2.2.0:
-    resolution: {integrity: sha512-zJq6RP/5q+TO2OpFV3FHzlPnFjmkb7Nc99a5SNjJE+uu/PkpChs+NIZSSzbBoD+6kjiISXjfYdwj1ZRQ81dz/w==}
+  pako@3.0.1:
+    resolution: {integrity: sha512-GupotUUI0mlhugKjUs4bjOwLt3nrehy9Ys2dxC0GtgVef5cnKggkDMmf2bq2poCCuVXopWPmqsc9VDT2iJUy+w==}
 
   param-case@3.0.4:
     resolution: {integrity: sha512-RXlj7zCYokReqWpOPH9oYivUzLYZ5vAPIfEmCTNViosC78F8F0H9y7T7gG2M39ymgutxF5gcFEsyZQSph9Bp3A==}
@@ -7536,6 +7536,24 @@ packages:
       '@rspack/core':
         optional: true
       node-sass:
+        optional: true
+      sass:
+        optional: true
+      sass-embedded:
+        optional: true
+      webpack:
+        optional: true
+
+  sass-loader@17.0.0:
+    resolution: {integrity: sha512-0Ybm8ohBQ9LcrycVrFQp/KQBNX5a3Wda9/smS0mE/xLffzEnwvV8nykOzrbiSWNzTE3IB/jiXx8O4QmDPG2+Gw==}
+    engines: {node: '>= 22.11.0'}
+    peerDependencies:
+      '@rspack/core': 0.x || ^1.0.0 || ^2.0.0-0
+      sass: ^1.3.0
+      sass-embedded: '*'
+      webpack: ^5.0.0
+    peerDependenciesMeta:
+      '@rspack/core':
         optional: true
       sass:
         optional: true
@@ -11529,7 +11547,7 @@ snapshots:
 
   '@docusaurus/react-loadable@6.0.0(react@19.2.8)':
     dependencies:
-      '@types/react': 19.1.17
+      '@types/react': 19.2.18
       react: 19.2.8
 
   '@docusaurus/theme-classic@3.10.2(@types/react@19.2.18)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)(typescript@7.0.2)':
@@ -11771,7 +11789,7 @@ snapshots:
       '@mdx-js/mdx': 3.1.1
       '@types/history': 4.7.11
       '@types/mdast': 4.0.4
-      '@types/react': 19.1.17
+      '@types/react': 19.2.18
       commander: 5.1.0
       joi: 17.13.3
       react: 19.2.8
@@ -13189,7 +13207,7 @@ snapshots:
   '@types/react-router@5.1.20':
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 19.1.17
+      '@types/react': 19.2.18
 
   '@types/react@19.1.17':
     dependencies:
@@ -14520,7 +14538,7 @@ snapshots:
       - sass-embedded
       - webpack
 
-  docusaurus-theme-openapi-docs@5.1.0(81eefbf8546963c4b3b26cdb6337ab0d):
+  docusaurus-theme-openapi-docs@5.1.3(81eefbf8546963c4b3b26cdb6337ab0d):
     dependencies:
       '@docusaurus/theme-common': 3.9.2(@docusaurus/plugin-content-docs@3.10.2(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(postcss@8.5.16)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)(typescript@7.0.2))(postcss@8.5.16)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
       '@hookform/error-message': 2.0.1(react-dom@19.2.7(react@19.2.8))(react-hook-form@7.81.0(react@19.2.8))(react@19.2.8)
@@ -14534,7 +14552,7 @@ snapshots:
       docusaurus-plugin-sass: 0.2.6(@docusaurus/core@3.10.2(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(postcss@8.5.16)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)(typescript@7.0.2))(sass@1.101.0)(webpack@5.108.4(postcss@8.5.16))
       file-saver: 2.0.5
       lodash: 4.18.1
-      pako: 2.2.0
+      pako: 3.0.1
       path-browserify: 1.0.1
       postman-code-generators: 2.1.1
       postman-collection: 5.3.0
@@ -14551,14 +14569,13 @@ snapshots:
       rehype-raw: 7.0.0
       remark-gfm: 4.0.1
       sass: 1.101.0
-      sass-loader: 16.0.8(sass@1.101.0)(webpack@5.108.4(postcss@8.5.16))
+      sass-loader: 17.0.0(sass@1.101.0)(webpack@5.108.4(postcss@8.5.16))
       unist-util-visit: 5.1.0
       url: 0.11.4
       xml-formatter: 3.7.0
     transitivePeerDependencies:
       - '@rspack/core'
       - '@types/react'
-      - node-sass
       - redux
       - sass-embedded
       - supports-color
@@ -16992,7 +17009,7 @@ snapshots:
       registry-url: 6.0.1
       semver: 7.8.5
 
-  pako@2.2.0: {}
+  pako@3.0.1: {}
 
   param-case@3.0.4:
     dependencies:
@@ -18266,6 +18283,11 @@ snapshots:
   sass-loader@16.0.8(sass@1.101.0)(webpack@5.108.4(postcss@8.5.16)):
     dependencies:
       neo-async: 2.6.2
+    optionalDependencies:
+      sass: 1.101.0
+      webpack: 5.108.4(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(html-minifier-terser@7.2.0)(postcss@8.5.16)
+
+  sass-loader@17.0.0(sass@1.101.0)(webpack@5.108.4(postcss@8.5.16)):
     optionalDependencies:
       sass: 1.101.0
       webpack: 5.108.4(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(html-minifier-terser@7.2.0)(postcss@8.5.16)
