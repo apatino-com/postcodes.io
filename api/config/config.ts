@@ -44,6 +44,7 @@ export interface Config {
   urlPrefix: string;
   defaults: any;
   httpHeaders?: Record<string, string>;
+  corsAllowedOrigins?: string[];
   prometheusUsername?: string;
   prometheusPassword?: string;
 }
@@ -127,6 +128,7 @@ export const getConfig = (env?: Env): Config => {
     PROMETHEUS_PASSWORD,
     HTTP_HEADERS,
     URL_PREFIX,
+    CORS_ALLOWED_ORIGINS,
   } = process.env;
 
   if (HOST !== undefined) cfg.host = HOST;
@@ -152,6 +154,11 @@ export const getConfig = (env?: Env): Config => {
     cfg.prometheusPassword = PROMETHEUS_PASSWORD;
 
   if (URL_PREFIX !== undefined) cfg.urlPrefix = URL_PREFIX;
+
+  if (CORS_ALLOWED_ORIGINS !== undefined)
+    cfg.corsAllowedOrigins = CORS_ALLOWED_ORIGINS.split(",")
+      .map((origin) => origin.trim())
+      .filter((origin) => origin.length > 0);
 
   try {
     if (HTTP_HEADERS !== undefined) cfg.httpHeaders = JSON.parse(HTTP_HEADERS);
