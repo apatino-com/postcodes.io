@@ -7,41 +7,60 @@ import * as outcodes from "../app/controllers/outcodes_controller";
 import * as postcodes from "../app/controllers/postcodes_controller";
 import * as scottishPostcodes from "../app/controllers/scottish_postcodes_controller";
 import * as terminatedPostcodes from "../app/controllers/terminated_postcodes_controller";
-import { getConfig } from "./config";
+import { Config } from "./config";
+import { rateLimiters } from "./rateLimit";
 
-export const routes = (app: Express): void => {
+export const routes = (app: Express, config: Config): void => {
+  // Per-IP rate limits on API routes only — health checks (/ping, /ready)
+  // and static documentation are exempt. Bulk lookups get a stricter limit
+  const { api: apiLimit, bulk: bulkLimit } = rateLimiters(config);
+
   const router = express.Router();
   router.get("/ping", utils.ping);
   router.get("/ready", utils.ready);
 
-  router.get("/postcodes", postcodes.query);
-  router.post("/postcodes", postcodes.bulk);
-  router.get("/postcodes/:postcode", postcodes.show);
-  router.get("/postcodes/:postcode/nearest", postcodes.nearest);
-  router.get("/postcodes/:postcode/validate", postcodes.valid);
-  router.get("/postcodes/:postcode/autocomplete", postcodes.autocomplete);
-  router.get("/postcodes/lon/:longitude/lat/:latitude", postcodes.lonlat);
-  router.get("/postcodes/lat/:latitude/lon/:longitude", postcodes.lonlat);
+  router.get("/postcodes", apiLimit, postcodes.query);
+  router.post("/postcodes", bulkLimit, postcodes.bulk);
+  router.get("/postcodes/:postcode", apiLimit, postcodes.show);
+  router.get("/postcodes/:postcode/nearest", apiLimit, postcodes.nearest);
+  router.get("/postcodes/:postcode/validate", apiLimit, postcodes.valid);
+  router.get(
+    "/postcodes/:postcode/autocomplete",
+    apiLimit,
+    postcodes.autocomplete
+  );
+  router.get(
+    "/postcodes/lon/:longitude/lat/:latitude",
+    apiLimit,
+    postcodes.lonlat
+  );
+  router.get(
+    "/postcodes/lat/:latitude/lon/:longitude",
+    apiLimit,
+    postcodes.lonlat
+  );
 
-  router.get("/outcodes", outcodes.query);
-  router.get("/outcodes/:outcode", outcodes.showOutcode);
-  router.get("/outcodes/:outcode/nearest", outcodes.nearest);
+  router.get("/outcodes", apiLimit, outcodes.query);
+  router.get("/outcodes/:outcode", apiLimit, outcodes.showOutcode);
+  router.get("/outcodes/:outcode/nearest", apiLimit, outcodes.nearest);
 
-  router.get("/places", places.query);
-  router.get("/places/:id", places.show);
+  router.get("/places", apiLimit, places.query);
+  router.get("/places/:id", apiLimit, places.show);
 
-  router.get("/random/places", places.random);
-  router.get("/random/postcodes", postcodes.random);
+  router.get("/random/places", apiLimit, places.random);
+  router.get("/random/postcodes", apiLimit, postcodes.random);
 
-  router.get("/terminated_postcodes/:postcode", terminatedPostcodes.show);
+  router.get(
+    "/terminated_postcodes/:postcode",
+    apiLimit,
+    terminatedPostcodes.show
+  );
 
-  router.get("/scotland/postcodes/:postcode", scottishPostcodes.show);
+  router.get("/scotland/postcodes/:postcode", apiLimit, scottishPostcodes.show);
 
   const docsBuildPath = join(__dirname, "../../build");
 
   router.use(express.static(docsBuildPath));
 
-  const { urlPrefix } = getConfig();
-  app.use(urlPrefix, router);
-
+  app.use(config.urlPrefix, router);
 };

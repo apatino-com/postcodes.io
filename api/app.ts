@@ -11,7 +11,7 @@ export default (config: Config): express.Express => {
   logger(app, config);
   expressConfig(app, config);
   prometheusConfig(app, config);
-  routes(app);
+  routes(app, config);
   rendererConfig(app);
   return app;
 };
