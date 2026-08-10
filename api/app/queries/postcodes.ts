@@ -289,7 +289,7 @@ export const nearestPostcodes = async (
       FROM public.postcodes
       WHERE date_of_termination IS NULL
         AND ST_DWithin(location, ST_MakePoint($1::float8, $2::float8)::geography, $3::float8, false)
-      ORDER BY location OPERATOR(public.<->) ST_MakePoint($1::float8, $2::float8)::geography
+      ORDER BY location OPERATOR(public.<->) ST_MakePoint($1::float8, $2::float8)::geography, postcode ASC
       LIMIT $4::int
     `,
     values: [longitude, latitude, radius, limit],
@@ -344,10 +344,10 @@ export const nearestPostcodesMany = async (
         FROM public.postcodes
         WHERE date_of_termination IS NULL
           AND ST_DWithin(location, i.pt, i.radius, false)
-        ORDER BY location OPERATOR(public.<->) i.pt
+        ORDER BY location OPERATOR(public.<->) i.pt, postcode ASC
         LIMIT i.lim
       ) o ON true
-      ORDER BY i.idx, distance ASC
+      ORDER BY i.idx, distance ASC, postcode ASC
     `,
     values: [idx, lng, lat, radii, limits],
   });
