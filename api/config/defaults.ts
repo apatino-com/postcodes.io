@@ -1,4 +1,9 @@
 const {
+  RATE_LIMIT_ENABLED,
+  RATE_LIMIT_WINDOW_MS,
+  RATE_LIMIT_MAX,
+  RATE_LIMIT_BULK_WINDOW_MS,
+  RATE_LIMIT_BULK_MAX,
   NEAREST_RADIUS_DEFAULT,
   NEAREST_RADIUS_MAX,
   NEAREST_LIMIT_DEFAULT,
@@ -18,6 +23,15 @@ const {
 import { parseEnv } from "../app/lib/env";
 
 export const defaults = {
+  rateLimit: {
+    enabled: parseEnv(RATE_LIMIT_ENABLED, true),
+    windowMs: parseEnv(RATE_LIMIT_WINDOW_MS, 60000), // Rate limit window in milliseconds
+    max: parseEnv(RATE_LIMIT_MAX, 300), // Maximum requests per IP per window
+    bulk: {
+      windowMs: parseEnv(RATE_LIMIT_BULK_WINDOW_MS, 60000),
+      max: parseEnv(RATE_LIMIT_BULK_MAX, 30), // Stricter cap for bulk lookup/geocode requests
+    },
+  },
   nearest: {
     radius: {
       DEFAULT: parseEnv(NEAREST_RADIUS_DEFAULT, 100),

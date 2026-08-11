@@ -65,6 +65,7 @@
     "express": "~5.1.0",
     "express-basic-auth": "~1.2.1",
     "express-prom-bundle": "~8.0.0",
+    "express-rate-limit": "~8.2.2",
     "minimist": "~1.2.8",
     "morgan": "~1.10.1",
     "pg": "~8.16.3",
