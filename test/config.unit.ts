@@ -32,5 +32,27 @@ describe("Config", () => {
         expect(configFactory).toThrow();
       });
     });
+
+    describe("CORS_ALLOWED_ORIGINS", () => {
+      it("is undefined by default", () => {
+        expect(configFactory().corsAllowedOrigins).toBeUndefined();
+      });
+
+      it("assigns corsAllowedOrigins from a comma-separated list", () => {
+        process.env["CORS_ALLOWED_ORIGINS"] =
+          "https://foo.example.com, https://bar.example.com";
+        expect(configFactory().corsAllowedOrigins).toEqual([
+          "https://foo.example.com",
+          "https://bar.example.com",
+        ]);
+      });
+
+      it("ignores empty entries", () => {
+        process.env["CORS_ALLOWED_ORIGINS"] = "https://foo.example.com,,";
+        expect(configFactory().corsAllowedOrigins).toEqual([
+          "https://foo.example.com",
+        ]);
+      });
+    });
   });
 });

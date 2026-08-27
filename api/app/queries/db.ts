@@ -1,4 +1,4 @@
-import { Pool, QueryConfig, QueryResult } from "pg";
+import { Pool, QueryConfig, QueryResult, QueryResultRow } from "pg";
 import { getConfig } from "../../config/config";
 import { getAzureAdToken } from "../lib/azure_auth";
 
@@ -36,7 +36,7 @@ const poolConfig = azureAdAuthEnabled
 
 export const pool = new Pool({ ...poolConfig, max });
 
-export const query = <T = any>(
+export const query = <T extends QueryResultRow = any>(
   text: string | QueryConfig,
   values?: any[]
 ): Promise<QueryResult<T>> => {
