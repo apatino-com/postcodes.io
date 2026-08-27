@@ -90,7 +90,13 @@ interface LookupGeolocationResult {
   result: null | ReturnType<typeof toJson>[];
 }
 
-const QUERY_WHITELIST = ["limit", "longitude", "latitude", "radius", "widesearch"];
+const QUERY_WHITELIST = [
+  "limit",
+  "longitude",
+  "latitude",
+  "radius",
+  "widesearch",
+];
 const sanitizeGeoQuery = (q: NearestPostcodesOptions) => {
   const result: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(q)) {
@@ -118,7 +124,8 @@ const clampRadius = (raw: string | undefined): number => {
     radius = parseFloat(raw);
     if (isNaN(radius)) throw new InvalidRadiusError();
   }
-  if (radius > defaults.nearest.radius.MAX) radius = defaults.nearest.radius.MAX;
+  if (radius > defaults.nearest.radius.MAX)
+    radius = defaults.nearest.radius.MAX;
   return radius;
 };
 
@@ -140,10 +147,12 @@ const bulkGeocode: Handler = async (request, response, next) => {
     const { geolocations } = request.body;
 
     let globalLimit: string | undefined;
-    if (request.query.limit) globalLimit = qToString(request.query.limit);
+    if (request.query.limit)
+      globalLimit = qToString(request.query.limit) ?? undefined;
 
     let globalRadius: string | undefined;
-    if (request.query.radius) globalRadius = qToString(request.query.radius);
+    if (request.query.radius)
+      globalRadius = qToString(request.query.radius) ?? undefined;
 
     let globalWidesearch: boolean | undefined;
     if (request.query.widesearch) globalWidesearch = true;
@@ -211,7 +220,9 @@ const bulkLookupPostcodes: Handler = async (request, response, next) => {
     if (postcodes.length > MAX_POSTCODES)
       return next(new ExceedMaxPostcodesError());
 
-    const inputs = postcodes.filter((pc): pc is string => typeof pc === "string");
+    const inputs = postcodes.filter(
+      (pc): pc is string => typeof pc === "string"
+    );
     const compacts: (string | null)[] = inputs.map((pc) => {
       const t = pc.trim().toUpperCase();
       return isValid(t) ? t.replace(/\s/g, "") : null;
@@ -237,29 +248,30 @@ const bulkLookupPostcodes: Handler = async (request, response, next) => {
 };
 
 export const query: Handler = async (request, response, next) => {
-  request.params.limit = qToString(request.query.limit);
-  request.params.radius = qToString(request.query.radius);
+  request.params.limit = qToString(request.query.limit) ?? "";
+  request.params.radius = qToString(request.query.radius) ?? "";
 
   if (request.query.latitude && request.query.longitude) {
-    request.params.latitude = qToString(request.query.latitude);
-    request.params.longitude = qToString(request.query.longitude);
+    request.params.latitude = qToString(request.query.latitude) ?? "";
+    request.params.longitude = qToString(request.query.longitude) ?? "";
     nearest_byLatLon(request, response, next);
     return;
   }
 
   if (request.query.lat && request.query.lon) {
-    request.params.latitude = qToString(request.query.lat);
-    request.params.longitude = qToString(request.query.lon);
+    request.params.latitude = qToString(request.query.lat) ?? "";
+    request.params.longitude = qToString(request.query.lon) ?? "";
     nearest_byLatLon(request, response, next);
     return;
   }
 
-  const postcode: string = qToString(request.query.q || request.query.query);
+  const postcode: string =
+    qToString(request.query.q || request.query.query) ?? "";
   if (isEmpty(postcode)) return next(new PostcodeQueryRequiredError());
 
   try {
     const results = await search({
-      limit: qToString(request.query.limit),
+      limit: qToString(request.query.limit) ?? undefined,
       postcode,
     });
     response.jsonApiResponse = {
@@ -276,7 +288,7 @@ export const autocomplete: Handler = async (request, response, next) => {
   try {
     const results = await search({
       postcode: request.params.postcode,
-      limit: qToString(request.query.limit),
+      limit: qToString(request.query.limit) ?? undefined,
     });
     response.jsonApiResponse = {
       status: 200,
@@ -311,8 +323,8 @@ const nearest_byLatLon: Handler = async (request, response, next) => {
 export const lonlat: Handler = async (request, response, next) => {
   try {
     const { limit, radius } = request.query;
-    request.params.limit = qToString(limit);
-    request.params.radius = qToString(radius);
+    request.params.limit = qToString(limit) ?? "";
+    request.params.radius = qToString(radius) ?? "";
     return nearest_byLatLon(request, response, next);
   } catch (error) {
     next(error);
@@ -325,10 +337,10 @@ export const nearest: Handler = async (request, response, next) => {
     const { limit, radius } = request.query;
     const result = await find(postcode);
     if (!result) return next(new PostcodeNotFoundError());
-    request.params.longitude = qToString(result.longitude);
-    request.params.latitude = qToString(result.latitude);
-    request.params.limit = qToString(limit);
-    request.params.radius = qToString(radius);
+    request.params.longitude = qToString(result.longitude) ?? "";
+    request.params.latitude = qToString(result.latitude) ?? "";
+    request.params.limit = qToString(limit) ?? "";
+    request.params.radius = qToString(radius) ?? "";
     return nearest_byLatLon(request, response, next);
   } catch (error) {
     next(error);
