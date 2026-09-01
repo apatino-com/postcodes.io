@@ -95,8 +95,8 @@ importers:
         specifier: ~3.1.1
         version: 3.1.1(@types/react@19.2.18)(react@19.2.8)
       '@redocly/cli':
-        specifier: ~2.47.0
-        version: 2.47.0
+        specifier: ~2.49.0
+        version: 2.49.0
       '@semantic-release/changelog':
         specifier: ~7.0.0
         version: 7.0.0(semantic-release@25.0.9(typescript@7.0.2))
@@ -2357,8 +2357,8 @@ packages:
   '@redocly/ajv@8.18.3':
     resolution: {integrity: sha512-l42u0of3hY98sN2A+M4qTX1O/KrpgGH32Hu9kP2GtHyD5Dfqq86PKFLe5dwaD8DEnNmlOlll2BAmeEtf0DaySg==}
 
-  '@redocly/cli@2.47.0':
-    resolution: {integrity: sha512-4sv638LZxiUSsNGqfWPzA2hrNM4KrNRc9jOaH9igqDJlZimiGCYliVpbdrWvfL/YlaSnIBpJE1O1CveXDYTTWw==}
+  '@redocly/cli@2.49.0':
+    resolution: {integrity: sha512-87UuARXYrPIiHhd/UriamL4BApuPgB0E91coBtoPG6PK4giTwiuo3dI4RoyMGhsC7TwgAnL8PJuhCwGymgwbVA==}
     engines: {node: '>=22.12.0 || >=20.19.0 <21.0.0', npm: '>=10'}
     hasBin: true
 
@@ -11850,7 +11850,7 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
-  '@redocly/cli@2.47.0': {}
+  '@redocly/cli@2.49.0': {}
 
   '@redocly/config@0.53.1':
     dependencies:
